@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My recipes | FoodLab</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="../shared/shared.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar">
+            <a href="index.html" class="logo">FoodLab<span>.</span></a>
+            <button type="button" id="menu-toggle" class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu"><span></span><span></span><span></span></button>
+            <div id="site-menu" class="site-menu" hidden></div>
+        </nav>
+    </header>
+
+    <main class="kitchen-page" id="main-content">
+        <div class="settings-header">
+            <p class="eyebrow">YOUR KITCHEN, YOUR LAB</p>
+            <h1>My recipes ✍️</h1>
+            <p>Write your own recipes. They appear on the home page, in "What can I cook?", in the meal planner and can be sent to AgentCity. They are saved in this browser.</p>
+        </div>
+
+        <section class="kitchen-card" aria-labelledby="form-title">
+            <div class="kitchen-heading"><h2 id="form-title">New recipe</h2></div>
+            <form id="recipe-form" class="mine-form" novalidate>
+                <label>Name<input id="f-name" type="text" maxlength="80" required></label>
+                <label>Short description<input id="f-desc" type="text" maxlength="300"></label>
+                <div class="mine-row">
+                    <label>Category<select id="f-category"></select></label>
+                    <label>Difficulty<select id="f-difficulty"><option>Easy</option><option>Medium</option><option>Hard</option></select></label>
+                    <label>Total time (min)<input id="f-time" type="number" min="1" max="600" placeholder="auto"></label>
+                    <label>Makes (servings)<input id="f-servings" type="number" min="1" max="50" value="2"></label>
+                </div>
+
+                <h3>Ingredients</h3>
+                <div id="ing-rows"></div>
+                <button type="button" id="add-ing" class="kitchen-button kitchen-button-light">+ Ingredient</button>
+
+                <h3>Steps</h3>
+                <div id="step-rows"></div>
+                <button type="button" id="add-step" class="kitchen-button kitchen-button-light">+ Step</button>
+
+                <p id="form-error" class="mine-error" role="alert" hidden></p>
+                <div class="kitchen-buttons">
+                    <button type="submit" id="save-btn" class="kitchen-button">Save recipe</button>
+                    <button type="button" id="cancel-edit" class="kitchen-button kitchen-button-light" hidden>Cancel edit</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="kitchen-card" aria-labelledby="list-title">
+            <div class="kitchen-heading"><h2 id="list-title">Saved recipes</h2><span id="mine-count" class="kitchen-pill">0</span></div>
+            <ul id="mine-list" class="history-list"></ul>
+            <p id="mine-empty" class="kitchen-empty">You have not written a recipe yet.</p>
+        </section>
+    </main>
+    <script src="recipes.js"></script>
+    <script src="custom.js"></script>
+    <script src="my-recipes.js"></script>
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Code a Robot: Learn JavaScript</title>
+<meta name="description" content="A 3D, quiz-based beginner course on JavaScript.">
+<style>
+:root{--bg:#e6effb;--pn:#fff;--ink:#14213d;--mu:#55627f;--ac:#1f4fd8;--ac2:#ffc933;--ok:#15803d;--bad:#b91c1c;--ln:#d5dff0;--cb:#14213d;--ct:#e8efff;--star:#8a6100;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1628;--pn:#14223b;--ink:#eaf0ff;--mu:#9fb0d3;--ac:#7ea2ff;--ok:#4ade80;--bad:#f87171;--ln:#243656;--cb:#0a1222;--ct:#e8efff;--star:#ffc933}}
+:root[data-theme="dark"]{--bg:#0c1628;--pn:#14223b;--ink:#eaf0ff;--mu:#9fb0d3;--ac:#7ea2ff;--ok:#4ade80;--bad:#f87171;--ln:#243656;--cb:#0a1222;--ct:#e8efff;--star:#ffc933}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:ui-rounded,"Nunito","Segoe UI",system-ui,sans-serif;line-height:1.5}
+.app{display:grid;grid-template-columns:minmax(0,1fr) clamp(340px,32vw,520px);grid-template-rows:minmax(0,1fr);height:100%;overflow:hidden}
+@supports (height:100dvh){html{height:100dvh}}
+#stage{position:relative;min-height:0;min-width:0;overflow:hidden}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.tip{position:absolute;left:14px;bottom:10px;font-size:13px;color:var(--mu)}
+#nogl{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--mu)}
+#nogl[hidden]{display:none}
+.panel{background:var(--pn);border-left:1px solid var(--ln);overflow-y:auto;min-height:0;padding:20px 22px;display:flex;flex-direction:column;gap:12px}
+.top{display:flex;align-items:center;gap:12px}
+.bar{flex:1;height:10px;border-radius:5px;background:var(--ln);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ac);transition:width .4s}
+#stars{font-weight:700;color:var(--ink);white-space:nowrap}
+#stars b{color:var(--star)}
+#step{color:var(--mu);font-size:14px}
+h1{margin:0;font-size:28px;line-height:1.15}
+h2{margin:0;font-size:18px}
+p{margin:0;max-width:60ch}
+pre{margin:0;padding:14px;border-radius:10px;background:var(--cb);color:var(--ct);font:14px/1.5 ui-monospace,Consolas,monospace;overflow-x:auto}
+#ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#ctl:empty{display:none}
+button{font:inherit;cursor:pointer;border-radius:10px;border:2px solid var(--ln);background:var(--pn);color:var(--ink);padding:9px 14px}
+button:hover:not(:disabled){border-color:var(--ac)}
+button:focus-visible,input:focus-visible,canvas:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.sw{width:40px;height:40px;padding:0;border-radius:50%}
+.sel{border-color:var(--ac);background:var(--ln)}
+.quiz{border-top:2px dashed var(--ln);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+#opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left}.mono{font-family:ui-monospace,Consolas,monospace}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--pn))}
+.opt.bad{border-color:var(--bad);animation:sh .3s}
+@keyframes sh{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+#fb{min-height:1.5em;font-weight:600}
+#fb.ok{color:var(--ok)}#fb.bad{color:var(--bad)}
+.nav{display:flex;justify-content:space-between;margin-top:auto;padding-top:8px}
+.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+:root[data-theme="dark"] .pri{color:#0c1628}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pri{color:#0c1628}}
+#note{color:var(--mu);font-size:14px}
+.fin #code,.fin #note,.fin #ctl,.fin .quiz{display:none}
+@media (max-aspect-ratio:1/1){.app{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(200px,38%) minmax(0,1fr)}.panel{border-left:0;border-top:1px solid var(--ln)}h1{font-size:23px}}
+@media (max-height:480px){.panel{padding:12px 16px;gap:8px}h1{font-size:21px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+select{font:inherit;padding:8px 10px;border-radius:10px;border:2px solid var(--ln);background:var(--pn);color:var(--ink);max-width:100%}
+.demo{background:royalblue;color:#fff;border-color:royalblue}.demo:hover{background:gold;color:#222;border-color:gold}
+.dg,.rf{display:grid;gap:8px;flex-basis:100%}.dg span,.rf span{background:var(--ln);border-radius:8px;padding:10px;text-align:center}
+.rf{border:2px dashed var(--ac);padding:8px;max-width:100%;box-sizing:border-box}
+.sign{flex-basis:100%;margin:0;padding:12px;border-radius:10px;background:var(--cb);color:var(--ct);font-weight:700;text-align:center}
+.panel>*{flex-shrink:0}
+.ex{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-basis:100%;border-top:2px dashed var(--ln);padding-top:10px}
+.ex label{flex-basis:100%;font-weight:700}
+.ex input{flex:1;min-width:0;font:14px ui-monospace,Consolas,monospace;padding:9px 10px;border-radius:10px;border:2px solid var(--ln);background:var(--cb);color:var(--ct)}
+.ex .st{flex-basis:100%;font-size:14px}.ex .st.ok{color:var(--ok)}.ex .st.bad{color:var(--bad)}
+.proj{display:none;flex-direction:column;gap:10px;border-top:2px dashed var(--ln);padding-top:14px}
+.fin .proj{display:flex}
+.proj textarea{width:100%;box-sizing:border-box;min-height:170px;resize:vertical;font:14px/1.5 ui-monospace,Consolas,monospace;padding:12px;border-radius:10px;border:2px solid var(--ln);background:var(--cb);color:var(--ct)}
+#out{min-height:3em;white-space:pre-wrap}
+#chk{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:14px}
+#chk li.on{color:var(--ok);font-weight:600}
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="stage">
+    <canvas id="c" aria-label="3D robot that reacts to your code"></canvas>
+    <div class="tip">Drag to turn the robot</div>
+    <div id="nogl" hidden>3D isn’t available on this device, but every lesson and quiz still works.</div>
+  </div>
+  <main class="panel">
+    <div class="top"><div class="bar"><i id="fill"></i></div><span id="stars"></span></div>
+    <p id="sn" style="font-size:13px;color:var(--mu)">Levels: ○ not started, ◐ learning, ✎ typed the code, ✓ mastered (quiz and typing). ★ = both questions right on the first try.</p>
+    <select id="jump" aria-label="Jump to a lesson"></select>
+    <span id="step"></span>
+    <h1 id="ttl"></h1>
+    <p id="body"></p>
+    <pre id="code"></pre>
+    <p id="note"></p>
+    <div id="ctl"></div>
+    <section class="quiz">
+      <h2 id="q"></h2>
+      <div id="opts"></div>
+      <p id="fb" aria-live="polite"></p>
+    </section>
+    <section class="proj" id="proj">
+      <h2 id="pt"></h2><p id="pd"></p><ul id="chk"></ul>
+      <textarea id="src" spellcheck="false" aria-label="Your robot program"></textarea>
+      <button id="run" class="pri">Run program</button>
+      <pre id="out" aria-live="polite">Press Run program to see what your code does.</pre>
+      <div class="nav" style="margin:0;padding:0"><button id="pprev">Previous</button><button id="preset">Start over</button><button id="pnext" class="pri">Next step</button></div>
+      <iframe id="pv" sandbox="allow-scripts" title="Code runner" hidden></iframe>
+    </section>
+    <div class="nav"><button id="back">Back</button><button id="next" class="pri">Next lesson</button></div>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const L=[
+{t:"What is JavaScript?",s:"a",b:"A web page has three jobs split between three languages. HTML is the structure, CSS is the style, and JavaScript is the behavior: it makes things happen when you click, type, or scroll. In this course you’ll give orders to a little robot, one idea at a time.",c:"// Instructions for the robot\nconsole.log(\"Hello, I’m Rio!\");",x:"Two slashes start a comment, a note for humans that the computer ignores. console.log prints a message so you can see what your code is doing.",q:"What is JavaScript’s job on a web page?",o:["Making things happen","Holding the walls up","Choosing the colors"],a:0,h:"HTML is structure and CSS is looks, so what’s left?",w:"JavaScript adds behavior: it reacts and does things.",q2:"What does console.log do?",o2:["Shows a message","Deletes a file","Paints the page"],a2:0,w2:"console.log prints a message, which is handy for checking your code."},
+{t:"Variables",s:"b",k:"color",b:"A variable is a labeled box that stores a value so you can use it later. let creates one. Tap a color swatch to change what’s in the robot’s color box.",c:"",x:"let makes the box, color is its label, and = puts the value inside. Change the value and the robot changes with it.",q:"What does a variable do?",o:["Stores a value","Makes text bold","Opens a new tab"],a:0,h:"Think of a labeled box.",w:"A variable stores a value under a name so you can reuse it.",q2:"Which keyword creates a variable?",o2:["let","show","make"],a2:0,w2:"let creates a variable. const creates one that can’t change."},
+{t:"Data types",s:"c",k:"power",b:"Values come in types. Text is a string and goes in quotes. Numbers have no quotes. A boolean is only true or false, like a light switch. Flip the robot’s power switch.",c:"",x:"Quotes mean text. true and false are special words, not text, so they have no quotes.",q:"Which value is a boolean?",o:["true","\"true\"","\"yes\""],a:0,h:"A boolean has no quotes.",w:"true without quotes is a boolean. In quotes it would be text.",q2:"What type is 42?",o2:["Number","String","Boolean"],a2:0,w2:"Numbers have no quotes, so 42 is a number."},
+{t:"Math with numbers",s:"c",k:"step",b:"JavaScript does math with + - * and /. The robot stands at position x. Add to x and it moves right; subtract and it moves left.",c:"",x:"x is the robot’s spot. The = sign stores the answer back into x, so x = x + 1 means “make x one bigger”.",q:"What does x = x + 1 do?",o:["Adds 1 to x","Makes x equal 1","Divides x by 1"],a:0,h:"+ means add.",w:"It takes the current x and adds 1 to it.",q2:"Which symbol multiplies?",o2:["*","+","="],a2:0,w2:"* multiplies, / divides, + adds, and - subtracts."},
+{t:"Functions",s:"c",k:"wave",b:"A function is a named set of instructions you can run whenever you like. You define it once, then call it by writing its name with parentheses.",c:"function wave() {\n  robot.arm = \"up and down\";\n}\n\nwave();   // call it",x:"function defines it, the code in curly braces is what it does, and wave() runs it. Press the button to call it.",q:"How do you run a function called wave?",o:["wave()","run wave","wave: go"],a:0,h:"Write its name and add parentheses.",w:"Calling a function means writing its name followed by ().",q2:"Why use functions?",o2:["Reuse instructions","Delete old code","Pick a font"],a2:0,w2:"A function lets you reuse the same instructions again and again."},
+{t:"Parameters",s:"c",k:"move",b:"Functions can take input called parameters, written inside the parentheses. One move function can then move the robot any number of steps.",c:"",x:"steps is a placeholder. When you call move(2), steps becomes 2 for that run.",q:"In move(2), what is 2?",o:["The input value","The function’s name","A comment line"],a:0,h:"It’s what you hand to the function.",w:"2 is the value passed in. Inside the function it fills the steps parameter.",q2:"Where do parameters go?",o2:["Inside ( )","After a semicolon","Inside a comment"],a2:0,w2:"Parameters sit inside the parentheses after the function name."},
+{t:"Decisions with if",s:"c",k:"if",b:"if lets your code make decisions. If the condition is true one block runs, and otherwise the else block runs. Drag the battery slider: the antenna light is green above 20.",c:"",x:"> means greater than. Only one of the two blocks runs each time.",q:"When does the else block run?",o:["When it is false","Every time","Before the if"],a:0,h:"else is the backup plan.",w:"else runs only when the if condition is false.",q2:"Which checks that two values are equal?",o2:["===","=","=>"],a2:0,w2:"=== compares two values. A single = stores a value."},
+{t:"Loops",s:"c",k:"loop",b:"A loop repeats code so you don’t have to write it again and again. A for loop says where to start, when to stop, and how to count. Pick how many times the robot steps.",c:"",x:"i starts at 0. While i < the limit, the loop runs, then i++ adds 1. When the test fails, it stops.",q:"How many times does a loop with i = 0 and i < 3 run?",o:["3 times","2 times","4 times"],a:0,h:"Count 0, 1, 2.",w:"i takes the values 0, 1, and 2, so the loop runs 3 times.",q2:"What does i++ do?",o2:["Adds 1 to i","Ends the loop","Prints i"],a2:0,w2:"i++ adds 1 to i each time around."},
+{t:"Arrays",s:"c",k:"arr",b:"An array is a numbered list that keeps many values in one variable. Counting starts at 0, not 1. Pick an index to light up a robot part.",c:"",x:"Square brackets get the item at that spot. parts[0] is the first item, so counting starts at 0.",q:"What is parts[0] in an array?",o:["The first item","The last item","The array’s size"],a:0,h:"Counting starts at 0.",w:"Counting starts at 0, so [0] is the first item.",q2:"What does parts.length give?",o2:["How many items","The first item","The last item"],a2:0,w2:"length is the number of items in the array."},
+{t:"Objects",s:"c",k:"obj",b:"An object groups related values with labels called properties. A robot has a name, a color, and more. Use a dot to read or change a property. Tap a swatch to change robot.color.",c:"",x:"Property names go before the colon and values after. robot.color reaches into the object and sets that property.",q:"How do you read the robot’s name?",o:["robot.name","robot(name)","name.robot"],a:0,h:"Use a dot: object.property.",w:"Use a dot: object.property.",q2:"What separates a property name from its value?",o2:["A colon","A comma","A slash"],a2:0,w2:"A colon links a property name to its value inside { }."},
+{t:"Events",s:"c",k:"event",b:"An event is something that happens on a page: a click, a key press, a scroll. addEventListener tells JavaScript what to do when it happens. Press the button below.",c:"button.addEventListener(\"click\", function () {\n  robot.jump();\n});",x:"The first word is the event to watch. The function is the reaction. Nothing runs until the event happens.",q:"What does a click listener wait for?",o:["A click","A page reload","A new color"],a:0,h:"The name says it.",w:"The listener waits for that event, then runs its function.",q2:"When does the function inside run?",o2:["When it happens","When the page closes","Never on its own"],a2:0,w2:"It runs each time the event happens."},
+{t:"Changing the page",s:"c",k:"dom",b:"JavaScript can change the page itself. document.querySelector finds an element, and textContent sets its text. Pick a message and watch the sign change.",c:"",x:"querySelector finds the element using the same selectors as CSS. textContent replaces what is written inside it.",q:"What does textContent change?",o:["The text inside","The page address","The font file"],a:0,h:"It’s in the name.",w:"textContent sets the text written inside an element.",q2:"What does document.querySelector find?",o2:["A page element","A file on disk","A password"],a2:0,w2:"It finds an element, using CSS-style selectors like #sign."},
+{t:"Put it all together",s:"c",b:"You now know variables, types, math, functions, decisions, loops, arrays, objects, events, and how to change a page. A tiny program uses several at once.",c:"let robot = { name: \"Rio\", battery: 80 };\n\nfunction check() {\n  if (robot.battery > 20) {\n    console.log(robot.name + \" is ready!\");\n  }\n}\n\ncheck();",x:"The object holds data, the function holds actions, and the if makes a decision. Together they make a tiny program.",q:"Which part makes a decision?",o:["The if statement","The let line","The function name"],a:0,h:"Decisions use if and else.",w:"if checks a condition and decides which code runs.",q2:"What will it print when battery is 80?",o2:["Rio is ready!","Nothing","Rio is empty!"],a2:0,w2:"80 is greater than 20, so the if block runs and prints Rio is ready!"}
+];
+const NEWL={"Data types":{t:"Strings",s:"c",b:`A string is text in quotes. Join strings with +, and use .length to count the characters. This is how the robot builds sentences.`,c:`let name = "Rio";\nlet hello = "Hi " + name;\nname.length;   // 3`,x:`+ glues strings together, so hello becomes "Hi Rio". Mind the space inside the quotes. length counts characters.`,q:`What does "Hi " + "Rio" make?`,o:[`Hi Rio`,`HiRio`,`Hi + Rio`],a:0,h:`+ glues text together, and the space inside the quotes counts.`,w:`+ joins strings and keeps the space inside the first one.`,q2:`What is "robot".length?`,o2:[`5`,`6`,`4`],a2:0,w2:`robot has 5 letters, so its length is 5.`},
+"Parameters":{t:"Return values",s:"c",b:`A function can hand a value back with return. The place where you called it receives that value, so you can store it or use it in math.`,c:`function double(n) {\n  return n * 2;\n}\n\nlet result = double(4);   // 8`,x:`return sends an answer out and ends the function. Without it, a function gives back nothing useful.`,q:`What does return do?`,o:[`Hands a value back`,`Repeats the function`,`Prints to the page`],a:0,h:`Think of the function giving you an answer.`,w:`return sends a value back to where the function was called.`,q2:`What is double(4) in the code above?`,o2:[`8`,`4`,`2`],a2:0,w2:`4 * 2 is 8.`},
+"Decisions with if":{t:"Comparing and combining",s:"c",b:`Conditions often need more than one check. && means AND: both sides must be true. || means OR: at least one side must be true. ! flips true to false.`,c:`let battery = 80;\nlet isOn = true;\n\nif (battery > 20 && isOn) {\n  console.log("Go!");\n}`,x:`Both checks are true here, so Go! prints. With ||, one true side would be enough.`,q:`When is a && b true?`,o:[`When both are true`,`When either is true`,`When both are false`],a:0,h:`AND needs both.`,w:`&& is true only if both sides are true.`,q2:`Which operator means OR?`,o2:[`||`,`&&`,`!`],a2:0,w2:`|| means OR and && means AND.`}};
+for(const k in NEWL){const n=L.findIndex(l=>l.t===k);L.splice(n+1,0,NEWL[k])}
+const SC={a:["floor"],b:["floor","body","head","wheel"],c:["floor","body","head","wheel","eyes","ant","arms"]};
+const PN=["eyes","arm","wheel"],PK=["eyes","arms","wheel"];
+const st={color:"orange",on:true,x:0,m:2,bat:60,rep:3,arr:0,part:"eyes",fl:0,wv:0,jp:0,txt:"Hello!"};
+const $=id=>document.getElementById(id);
+let i=0,qn=0,tried=false,solved=false,GL=null,draft={i:-1,v:""};const miss={},got={},ex={};const stars=()=>L.reduce((n,_,j)=>n+(got[j]>=2&&!miss[j]?1:0),0);
+
+function init3D(){
+  try{
+    if(typeof THREE==="undefined")throw 0;
+    const cv=$("c"),r=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+    const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(40,1,.1,100);
+    scene.add(new THREE.HemisphereLight(0xffffff,0x8899bb,.95));
+    const sun=new THREE.DirectionalLight(0xffffff,.8);sun.position.set(4,6,5);scene.add(sun);
+    const world=new THREE.Group(),bot=new THREE.Group();scene.add(world);world.add(bot);
+    const P={},mat=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.6},o||{}));
+    function part(n,g,m,x,y,z,par){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.userData={v:0,g:0,k:1};P[n]=o;(par||bot).add(o);return o}
+    const floor=part("floor",new THREE.BoxGeometry(8.4,.2,3.2),mat(0x7d8aa6),0,-1,0,world);
+    for(let x=-3;x<=3;x++){const t=new THREE.Mesh(new THREE.BoxGeometry(.08,.02,.6),mat(0xffffff));t.position.set(x,.11,1);floor.add(t)}
+    const bodyM=mat(0xff8c42),wg=new THREE.CylinderGeometry(.3,.3,.25,18);
+    const w1=part("wheel",wg,mat(0x333344),-.85,-.6,0);w1.rotation.z=Math.PI/2;
+    const w2=new THREE.Mesh(wg,w1.material);w2.position.set(0,-1.7,0);w1.add(w2);
+    part("body",new THREE.BoxGeometry(1.4,1.2,1),bodyM,0,.1,0);
+    part("head",new THREE.BoxGeometry(1,.8,.9),mat(0xdde3f0),0,1.1,0);
+    const eyeM=new THREE.MeshBasicMaterial({color:0x44ffcc}),eg=new THREE.BoxGeometry(.18,.18,.05);
+    const eyes=part("eyes",eg,eyeM,-.22,1.15,.46),e2=new THREE.Mesh(eg,eyeM);e2.position.set(.44,0,0);eyes.add(e2);
+    const ballM=new THREE.MeshBasicMaterial({color:0x51cf66});
+    const ant=part("ant",new THREE.CylinderGeometry(.04,.04,.5),mat(0x555566),0,1.75,0);
+    const ball=new THREE.Mesh(new THREE.SphereGeometry(.12,12,12),ballM);ball.position.y=.32;ant.add(ball);
+    const ag=new THREE.BoxGeometry(.25,.8,.25);ag.translate(0,-.4,0);
+    const armL=part("arms",ag,bodyM,-.95,.65,0),armR=new THREE.Mesh(ag,bodyM);armR.position.set(1.9,0,0);armL.add(armR);
+    let drag=false,lx=0;
+    cv.addEventListener("pointerdown",e=>{drag=true;lx=e.clientX;cv.setPointerCapture(e.pointerId)});
+    cv.addEventListener("pointermove",e=>{if(drag){world.rotation.y+=(e.clientX-lx)*.01;lx=e.clientX}});
+    ["pointerup","pointercancel"].forEach(t=>cv.addEventListener(t,()=>drag=false));
+    const T=new THREE.Vector3(0,.5,0),DIR=new THREE.Vector3(2,2.6,9).normalize();
+    function fit(){const s=$("stage"),w=s.clientWidth,h=s.clientHeight;if(!w||!h)return;r.setPixelRatio(Math.min(devicePixelRatio||1,2));r.setSize(w,h,false);cam.aspect=w/h;
+      const t=Math.tan(cam.fov*Math.PI/360),d=Math.max(3/t,5/(t*cam.aspect));cam.position.copy(T).addScaledVector(DIR,d);cam.lookAt(T);cam.updateProjectionMatrix()}
+    new ResizeObserver(fit).observe($("stage"));fit();
+    const EC=[new THREE.Color(0x333340),new THREE.Color(0x44ffcc)];
+    (function tick(){requestAnimationFrame(tick);if(document.hidden)return;
+      if(!drag)world.rotation.y*=.94;
+      const fl=st.fl>0;if(fl)st.fl--;
+      for(const n in P){const o=P[n],u=o.userData;u.k=(fl&&n===st.part)?1.3:1;u.v+=(u.g-u.v)*.12;o.scale.setScalar(Math.max(u.v*u.k,.0001))}
+      bot.position.x+=(st.x-bot.position.x)*.08;
+      let y=0;if(st.jp>0){st.jp--;y=Math.abs(Math.sin((40-st.jp)/40*Math.PI))*1.3}bot.position.y=y;
+      if(st.wv>0){st.wv--;armR.rotation.z=2.4+Math.sin((60-st.wv)*.45)*.5}else armR.rotation.z*=.88;
+      eyeM.color.lerp(EC[st.on?1:0],.15);ballM.color.set(st.bat>20?0x51cf66:0xff6b6b);
+      r.render(scene,cam)})();
+    GL={P,setColor:c=>bodyM.color.set(c)};
+  }catch(e){$("c").hidden=true;$("nogl").hidden=false;$("stage").querySelector(".tip").hidden=true}
+}
+function applyScene(){
+  if(!GL)return;
+  const v=SC[i<L.length?L[i].s:"c"];
+  for(const n in GL.P)GL.P[n].userData.g=v.includes(n)?1:0;
+  GL.setColor(st.color);
+}
+function codeText(){
+  const k=L[i].k;
+  if(k==="color")return 'let color = "'+st.color+'";';
+  if(k==="power")return 'let name = "Rio";   // string\nlet battery = 60;   // number\nlet isOn = '+st.on+';   // boolean';
+  if(k==="step")return "let x = "+st.x+";\nx = x + 1;   // move right\nx = x - 1;   // move left";
+  if(k==="move")return "function move(steps) {\n  x = x + steps;\n}\n\nmove("+st.m+");";
+  if(k==="if")return 'let battery = '+st.bat+';\n\nif (battery > 20) {\n  light = "green";\n} else {\n  light = "red";\n}';
+  if(k==="loop")return "for (let i = 0; i < "+st.rep+"; i++) {\n  move(1);\n}";
+  if(k==="arr")return 'let parts = ["eyes", "arm", "wheel"];\n\nparts['+st.arr+'];   // "'+PN[st.arr]+'"';
+  if(k==="obj")return 'let robot = {\n  name: "Rio",\n  color: "orange"\n};\n\nrobot.color = "'+st.color+'";';
+  if(k==="dom")return 'const sign = document.querySelector("#sign");\nsign.textContent = "'+st.txt+'";';
+  return L[i].c;
+}
+function controls(){
+  const c=$("ctl"),SEL="button,select,input,[tabindex]",ae=document.activeElement,fi=ae&&c.contains(ae)?[...c.querySelectorAll(SEL)].indexOf(ae):-1;c.innerHTML="";const K=L[i].k,upd=()=>{$("code").textContent=codeText()},cl=v=>Math.max(-3,Math.min(3,v));
+  const btn=(t,f,sel,cls)=>{const b=document.createElement("button");b.textContent=t;b.className=cls||(sel?"sel":"");b.onclick=f;c.append(b)};
+  if(K==="color"||K==="obj")["orange","skyblue","hotpink","mediumseagreen"].forEach(k=>{const b=document.createElement("button");b.className="sw"+(k===st.color?" sel":"");b.style.background=k;b.setAttribute("aria-label","Set color "+k);b.onclick=()=>{st.color=k;if(GL)GL.setColor(k);controls();upd()};c.append(b)});
+  if(K==="power")btn(st.on?"Turn off":"Turn on",()=>{st.on=!st.on;controls();upd()});
+  if(K==="step"){btn("x = x + 1",()=>{st.x=cl(st.x+1);upd()});btn("x = x - 1",()=>{st.x=cl(st.x-1);upd()})}
+  if(K==="wave")btn("Call wave()",()=>{st.wv=60},0,"demo");
+  if(K==="move")[1,2,-2].forEach(n=>btn("move("+n+")",()=>{st.x=cl(st.x+n);st.m=n;upd()}));
+  if(K==="if"){const l=document.createElement("label"),r=document.createElement("input");r.type="range";r.min=0;r.max=100;r.value=st.bat;r.oninput=()=>{st.bat=+r.value;upd()};l.append(document.createTextNode("battery "),r);c.append(l)}
+  if(K==="loop")[1,2,3,4,5].forEach(n=>btn("repeat "+n,()=>{st.rep=n;st.x=-3+n;controls();upd()},st.rep===n));
+  if(K==="arr")[0,1,2].forEach(n=>btn("parts["+n+"]",()=>{st.arr=n;st.part=PK[n];st.fl=50;controls();upd()},st.arr===n));
+  if(K==="event")btn("Click me",()=>{st.jp=40},0,"demo");
+  if(K==="dom"){const p=document.createElement("p");p.id="sign";p.className="sign";p.textContent=st.txt;c.append(p);
+    ["Hello!","Good job!","Keep going!"].forEach(t=>btn(t,()=>{st.txt=t;p.textContent=t;upd()}))}
+  exBox(c);
+  if(fi>=0){const n=[...c.querySelectorAll(SEL)][fi];if(n)n.focus()}
+}
+function render(){
+  const done=i>=L.length;tried=false;solved=false;
+  const J=$("jump");J.innerHTML="";L.forEach((l,j)=>J.add(new Option(["○ ","◐ ","✎ ","✓ "][mast(j)]+(j+1)+". "+l.t,j)));J.add(new Option("Finish line",L.length));J.value=i;
+  document.body.classList.toggle("fin",done);
+  $("fill").style.width=Math.min(i/L.length,1)*100+"%";
+  $("stars").innerHTML="<b>★</b> "+stars()+" / "+L.length;
+  $("back").disabled=i===0;
+  if(done){
+    $("step").textContent="Course complete";$("ttl").textContent="Your robot works!";
+    $("body").textContent="You earned "+stars()+" of "+L.length+" first-try stars and typed "+Object.keys(ex).length+" of "+L.length+" code snippets correctly. You now know variables, data types, math, functions, decisions, loops, arrays, objects, events, and how to change a page. Now try the mini project below: write real code, press Run, and watch the robot do what you wrote.";
+    $("next").textContent="Start again";$("next").disabled=false;chk();
+  }else{
+    const l=L[i];
+    $("step").textContent="Lesson "+(i+1)+" of "+L.length;$("ttl").textContent=l.t;$("body").textContent=l.b;
+    $("code").textContent=codeText();$("note").textContent=l.x;controls();
+    qn=got[i]===1?1:0;showQ();
+  }
+  jumpLabels();applyScene();
+}
+const isCode=t=>/^[<.#]|[{};()=*+"\[]|[a-z]\.[a-z]|^let$|^[|&!]+$|^\d+$/.test(t);
+const KEY="js-robot-v2";
+function save(){try{localStorage.setItem(KEY,JSON.stringify({i,got,miss,ex}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d){Object.assign(got,d.got||{});Object.assign(miss,d.miss||{});Object.assign(ex,d.ex||{});i=Math.min(Math.max(+d.i||0,0),L.length)}}catch(e){}}
+function cur(){const l=L[i];return qn?{q:l.q2,o:l.o2,a:l.a2,h:H2[i]||"Look back at the code box.",w:l.w2}:l}
+function showQ(){
+  const l=L[i],c=cur(),fb=$("fb"),nx=$("next"),last=i===L.length-1;
+  solved=false;fb.textContent="";fb.className="";
+  $("q").textContent="Question "+(qn+1)+" of 2: "+c.q;
+  const o=$("opts");o.innerHTML="";
+  c.o.map((t,j)=>[t,j]).sort(()=>Math.random()-.5).forEach(([t,j])=>{const b=document.createElement("button");b.className="opt"+(isCode(t)?" mono":"");b.textContent=t;b.onclick=()=>pick(b,j);o.append(b)});
+  if(got[i]>=2){solved=true;fb.className="ok";fb.textContent="Already answered. "+l.w2;nx.textContent=last?"Finish":"Next lesson";nx.disabled=false}
+  else{nx.textContent=qn?(last?"Finish":"Next lesson"):"Next question";nx.disabled=true}
+}
+function pick(b,j){
+  if(solved)return;const c=cur(),fb=$("fb");
+  if(j===c.a){solved=true;got[i]=Math.max(got[i]||0,qn+1);b.classList.add("ok");fb.className="ok";fb.textContent="Correct! "+c.w;$("next").disabled=false;$("stars").innerHTML="<b>★</b> "+stars()+" / "+L.length}
+  else{if(!(got[i]>=2))miss[i]=1;b.classList.add("bad");b.disabled=true;fb.className="bad";fb.textContent="Not quite. Hint: "+c.h}
+  save();jumpLabels();
+}
+$("next").onclick=()=>{if(i>=L.length){i=0;qn=0;for(const k in got)delete got[k];for(const k in miss)delete miss[k];for(const k in ex)delete ex[k];resetProj()}else if(got[i]===1&&qn===0){qn=1;showQ();return}else{i++;qn=0}save();render()};
+$("back").onclick=()=>{if(i>0){i--;save();render()}};
+$("jump").onchange=e=>{i=+e.target.value;save();render()};
+
+const NAMES=["Not started","Learning","Practiced","Mastered"];
+const H2=["It shows you what your code is doing.","It is also the first word in the example.","Look for quotes. There are none.","Count the letters.","It looks like a star.","Write once, use many times.","Look at move(steps).","Multiply 4 by 2.","Three equal signs.","Two vertical bars.","++ means plus one.","It counts the items.","It sits between the label and the value.","It waits for the event.","It looks things up with CSS selectors.","Check whether 80 > 20."];
+const EX={
+"What is JavaScript?":{p:'Type a line that prints Hello with console.log.',re:/^console\.log\(\s*(["'`]).+\1\s*\)\s*;?$/,h:'console.log("text");'},
+"Variables":{p:'Type a variable named color holding the text red.',re:/^let\s+color\s*=\s*["']red["']\s*;?$/i,h:'let, the name, =, the value in quotes.'},
+"Data types":{p:'Type a variable isOn set to true.',re:/^let\s+isOn\s*=\s*true\s*;?$/,h:'A boolean has no quotes.'},
+"Strings":{p:'Type the expression that joins the text "Hi " and the variable name.',re:/^["']Hi ?["']\s*\+\s*name\s*;?$/,h:'"Hi " + name'},
+"Math with numbers":{p:'Type the line that makes x one bigger.',re:/^x\s*=\s*x\s*\+\s*1\s*;?$/,h:'x = x + 1;'},
+"Functions":{p:'Type the first line of a function called wave.',re:/^function\s+wave\s*\(\s*\)\s*\{?$/,h:'function name() {'},
+"Parameters":{p:'Type the first line of a function move with a parameter steps.',re:/^function\s+move\s*\(\s*steps\s*\)\s*\{?$/,h:'Put steps inside the parentheses.'},
+"Return values":{p:'Type a line that returns a + b.',re:/^return\s+a\s*\+\s*b\s*;?$/,h:'return, then the expression.'},
+"Decisions with if":{p:'Type the first line of an if that checks battery is greater than 20.',re:/^if\s*\(\s*battery\s*>\s*20\s*\)\s*\{?$/,h:'if (condition) {'},
+"Comparing and combining":{p:'Type an if line that needs battery > 20 AND isOn.',re:/^if\s*\(\s*battery\s*>\s*20\s*&&\s*isOn\s*\)\s*\{?$/,h:'Join the two checks with &&.'},
+"Loops":{p:'Type a for loop header that runs 3 times, counting i from 0.',re:/^for\s*\(\s*let\s+i\s*=\s*0\s*;\s*i\s*<\s*3\s*;\s*i\+\+\s*\)\s*\{?$/,h:'for (start; test; step) {'},
+"Arrays":{p:'Type an array named colors holding "red" and "blue".',re:/^let\s+colors\s*=\s*\[\s*["']red["']\s*,\s*["']blue["']\s*\]\s*;?$/,h:'Square brackets, items separated by a comma.'},
+"Objects":{p:'Type an object named robot with the property name set to "Rio".',re:/^let\s+robot\s*=\s*\{\s*name\s*:\s*["']Rio["']\s*,?\s*\}\s*;?$/,h:'{ name: "Rio" }'},
+"Events":{p:'Type the first line that listens for a click on button.',re:/^button\.addEventListener\(\s*["']click["']\s*,\s*(function\s*\(\s*\)|\(\s*\)\s*=>)\s*\{$/,h:'addEventListener("click", function () {'},
+"Changing the page":{p:'Type a line that sets sign.textContent to some text.',re:/^sign\.textContent\s*=\s*["'].+["']\s*;?$/,h:'object.property = "text";'},
+"Put it all together":{p:'Type the condition that checks robot.battery is greater than 20.',re:/^\(?\s*robot\.battery\s*>\s*20\s*\)?$/,h:'Dot notation, then >.'}};
+const mast=j=>{const e=EX[L[j].t],q=got[j]>=2;return q&&(!e||ex[j])?3:(e&&ex[j])?2:(got[j]>=1||miss[j])?1:0};
+function jumpLabels(){[...$("jump").options].forEach((o,j)=>{if(j<L.length)o.text=["○ ","◐ ","✎ ","✓ "][mast(j)]+(j+1)+". "+L[j].t});if(i<L.length)$("step").textContent="Lesson "+(i+1)+" of "+L.length+" · "+NAMES[mast(i)]}
+function exBox(c){
+  const e=EX[L[i].t];if(!e)return;
+  const w=document.createElement("div");w.className="ex";
+  const l=document.createElement("label");l.textContent="Try it: "+e.p;l.htmlFor="exin";
+  const f=document.createElement("input");f.id="exin";f.type="text";f.placeholder="type it here";f.autocomplete="off";f.spellcheck=false;if(draft.i===i)f.value=draft.v;f.oninput=()=>{draft={i,v:f.value}};
+  const b=document.createElement("button");b.textContent="Check";
+  const s=document.createElement("span");s.className="st";s.setAttribute("aria-live","polite");
+  if(ex[i]){s.className="st ok";s.textContent="✓ You typed this one correctly."}
+  const go=()=>{const v=f.value.trim().replace(/\s+/g," ");
+    if(e.re.test(v)){ex[i]=1;s.className="st ok";s.textContent="✓ Correct! That is real, working code.";save();jumpLabels()}
+    else{s.className="st bad";s.textContent="Not quite. Hint: "+e.h}};
+  b.onclick=go;f.onkeydown=ev=>{if(ev.key==="Enter")go()};
+  w.append(l,f,b,s);c.append(w)}
+/* ---------- Mini project: real code, run in a sandbox ---------- */
+const PJ=KEY+"-proj",SRC=$("src"),FR=$("pv"),strip=t=>t.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm,"");
+const says=r=>r.calls.filter(c=>c[0]==="say").map(c=>c[1]),moves=r=>r.calls.filter(c=>c[0]==="move").map(c=>c[1]);
+const STEPS=[
+{t:"Step 1 of 6: Make Rio talk",d:"Store a name in a variable with let, then make Rio say it with robot.say(name).",s:'// Step 1: say hello\nlet name = "";\n',k:[["A variable made with let or const",(r,s)=>/\b(let|const)\s+\w+/.test(s)],["Rio says something (robot.say with real text)",r=>says(r).some(t=>t.trim())],["robot.say uses your variable, not typed-in text",(r,s)=>/robot\.say\(\s*[A-Za-z_$][\w$]*\s*\)/.test(s)]]},
+{t:"Step 2 of 6: Move with math",d:"Move Rio exactly 3 steps to the right with robot.move. Math is allowed, like robot.move(1 + 2).",s:'\n// Step 2: move\n',k:[["robot.move is called",r=>moves(r).length>0],["Rio moves a total of exactly 3 steps",r=>moves(r).reduce((a,b)=>a+b,0)===3]]},
+{t:"Step 3 of 6: A function with a parameter",d:"Write a function greet(person) that makes Rio say hello to that person. Call it twice with different names.",s:'\n// Step 3: greet\n',k:[["A function with a parameter",(r,s)=>/function\s+\w+\s*\(\s*\w+|\(\s*\w+\s*\)\s*=>/.test(s)],["Rio speaks at least twice",r=>says(r).length>=2],["The messages are different",r=>new Set(says(r)).size>=2]]},
+{t:"Step 4 of 6: A loop",d:"Use a for loop that calls robot.move(1) inside it, so Rio takes at least four steps in total.",s:'\n// Step 4: loop\n',k:[["A for loop that calls robot.move inside",(r,s)=>/for\s*\([^)]*\)\s*\{[^}]*robot\.move/.test(s)],["robot.move ran at least 4 times",r=>moves(r).length>=4]]},
+{t:"Step 5 of 6: Make a decision, no code given",d:"Create a battery variable. If battery is above 20, Rio says Ready. Otherwise he says Charge me.",s:'\n// Step 5: write it yourself\n',k:[["A battery variable",(r,s)=>/\b(let|const)\s+battery\b/.test(s)],["An if that checks battery, with an else",(r,s)=>/if\s*\([^)]*battery/.test(s)&&/\belse\b/.test(s)],["Rio says Ready or Charge me",r=>says(r).some(t=>/ready|charge/i.test(t))]]},
+{t:"Step 6 of 6: Final challenge, no hints",d:"Build a routine for Rio. You only get the requirements: write whatever code you need.",s:'\n// Step 6: final challenge\n',k:[["An object with at least two properties",(r,s)=>/\{\s*[\w$]+\s*:[^}]*,\s*[\w$]+\s*:/.test(s)],["An array with three or more items",(r,s)=>/\[[^\]]*,[^\]]*,[^\]]*\]/.test(s)],["A loop (for or forEach)",(r,s)=>/for\s*\(|\.forEach\(/.test(s)],["At least two functions",(r,s)=>(s.match(/function\s+\w+|=>/g)||[]).length>=2],["Rio waves or jumps",r=>r.calls.some(c=>c[0]==="wave"||c[0]==="jump")],["Rio says at least three things",r=>says(r).length>=3]]}];
+let pn=0,pdone=false,RES=null,rt=0,tm=[];
+const PRE='window.__c=[];window.__l=[];window.__e=null;window.robot={say:t=>__c.push(["say",String(t)]),move:n=>__c.push(["move",Number(n)]),wave:()=>__c.push(["wave"]),jump:()=>__c.push(["jump"]),setColor:c=>__c.push(["color",String(c)])};console.log=(...a)=>{__l.push(a.map(String).join(" "))};window.onerror=m=>{__e=String(m);return true};';
+const POST='parent.postMessage({c:__c,l:__l,e:__e},"*");';
+function savep(){try{localStorage.setItem(PJ,JSON.stringify({pn,s:SRC.value,d:pdone}))}catch(e){}}
+function act(c){const k=c[0];if(k==="move")st.x=Math.max(-3,Math.min(3,st.x+(isFinite(c[1])?c[1]:0)));else if(k==="wave")st.wv=60;else if(k==="jump")st.jp=40;else if(k==="color"){st.color=c[1];if(GL)GL.setColor(c[1])}}
+function show(r){const L2=r.logs.map(t=>"log: "+t).concat(r.calls.map(c=>c[0]==="say"?"Rio says: "+c[1]:c[0]==="move"?"Rio moves "+c[1]:c[0]==="color"?"Rio turns "+c[1]:"Rio does "+c[0]));if(r.err)L2.push("Error: "+r.err);$("out").textContent=L2.join("\n")||"Your program ran, but Rio did nothing yet.";
+  tm.forEach(clearTimeout);tm=[];st.x=0;r.calls.forEach((c,k)=>tm.push(setTimeout(()=>act(c),300+k*650)))}
+function run(){const code=SRC.value,out=$("out");RES=null;clearTimeout(rt);
+  if(/while\s*\(\s*(true|1)\s*\)|for\s*\(\s*;\s*;\s*\)/.test(strip(code))){out.textContent="That loop would never stop, so it was not run. Give it a way to end.";chk();return}
+  out.textContent="Running…";
+  FR.srcdoc="<script>"+PRE+"<\/script><script>"+code.replace(/<\/script/gi,"<\\/script")+"<\/script><script>"+POST+"<\/script>";
+  rt=setTimeout(()=>{if(!RES){out.textContent="The program took too long to finish.";chk()}},2500)}
+addEventListener("message",e=>{if(e.source!==FR.contentWindow||!e.data)return;clearTimeout(rt);RES={calls:e.data.c||[],logs:e.data.l||[],err:e.data.e};show(RES);chk()});
+function chk(){const S=STEPS[pn],last=pn===STEPS.length-1,s=strip(SRC.value),r=RES;
+  const rr=S.k.map(([t,f])=>{let v=last&&pdone;try{if(!v)v=!!r&&!r.err&&f(r,s)}catch(e){}return[t,v]}),all=rr.every(x=>x[1]);
+  $("pt").textContent=S.t;
+  $("pd").textContent=all&&last?(pdone?"Project complete! You wrote real JavaScript that moved a real robot. Copy your code into a .js file to keep it.":"Every requirement is met. Press Complete to finish."):S.d+(r?"":" Write your code, then press Run program to check it.");
+  $("chk").innerHTML=rr.map(([t,ok])=>'<li class="'+(ok?"on":"")+'">'+(ok?"✓ ":"○ ")+t.replace(/</g,"&lt;")+"</li>").join("");
+  $("pnext").disabled=!all||(last&&pdone);$("pnext").textContent=last?(all?(pdone?"Completed ✓":"Complete ★"):"Finish the checklist"):"Next step";$("pprev").disabled=pn===0}
+function resetProj(){pn=0;pdone=false;RES=null;SRC.value=STEPS[0].s;$("out").textContent="Press Run program to see what your code does.";savep();chk()}
+$("run").onclick=run;
+$("pnext").onclick=()=>{if(pn<STEPS.length-1){pn++;RES=null;const m=STEPS[pn].s.trim().split("\n")[0];if(!SRC.value.includes(m))SRC.value+=STEPS[pn].s}else pdone=true;savep();chk()};
+$("pprev").onclick=()=>{if(pn>0){pn--;RES=null;savep();chk()}};
+$("preset").onclick=()=>{const b=$("preset");if(b.dataset.s!=="1"){b.dataset.s="1";b.textContent="Click again to erase";setTimeout(()=>{b.dataset.s="";b.textContent="Start over"},4000);return}b.dataset.s="";b.textContent="Start over";resetProj()};
+SRC.oninput=()=>{pdone=false;RES=null;savep();chk()};
+try{const d=JSON.parse(localStorage.getItem(PJ)||"null");if(d){pn=Math.min(Math.max(d.pn|0,0),STEPS.length-1);SRC.value=d.s||STEPS[0].s;pdone=!!d.d}else SRC.value=STEPS[0].s}catch(e){SRC.value=STEPS[0].s}
+chk();
+load();init3D();render();
+</script>
+</body>
+</html>

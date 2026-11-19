@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Build a House: Learn HTML and CSS</title>
+<meta name="description" content="A 3D, quiz-based beginner course on HTML and CSS.">
+<style>
+:root{--bg:#e6effb;--pn:#fff;--ink:#14213d;--mu:#55627f;--ac:#1f4fd8;--ac2:#ffc933;--ok:#15803d;--bad:#b91c1c;--ln:#d5dff0;--cb:#14213d;--ct:#e8efff;--star:#8a6100;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1628;--pn:#14223b;--ink:#eaf0ff;--mu:#9fb0d3;--ac:#7ea2ff;--ok:#4ade80;--bad:#f87171;--ln:#243656;--cb:#0a1222;--ct:#e8efff;--star:#ffc933}}
+:root[data-theme="dark"]{--bg:#0c1628;--pn:#14223b;--ink:#eaf0ff;--mu:#9fb0d3;--ac:#7ea2ff;--ok:#4ade80;--bad:#f87171;--ln:#243656;--cb:#0a1222;--ct:#e8efff;--star:#ffc933}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:ui-rounded,"Nunito","Segoe UI",system-ui,sans-serif;line-height:1.5}
+.app{display:grid;grid-template-columns:minmax(0,1fr) clamp(340px,32vw,520px);grid-template-rows:minmax(0,1fr);height:100%;overflow:hidden}
+@supports (height:100dvh){html{height:100dvh}}
+#stage{position:relative;min-height:0;min-width:0;overflow:hidden}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.tip{position:absolute;left:14px;bottom:10px;font-size:13px;color:var(--mu)}
+#nogl{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--mu)}
+#nogl[hidden]{display:none}
+.panel{background:var(--pn);border-left:1px solid var(--ln);overflow-y:auto;min-height:0;padding:20px 22px;display:flex;flex-direction:column;gap:12px}
+.panel>*{flex-shrink:0}
+.top{display:flex;align-items:center;gap:12px}
+.bar{flex:1;height:10px;border-radius:5px;background:var(--ln);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ac);transition:width .4s}
+#stars{font-weight:700;color:var(--ink);white-space:nowrap}
+#stars b{color:var(--star)}
+#step{color:var(--mu);font-size:14px}
+h1{margin:0;font-size:28px;line-height:1.15}
+h2{margin:0;font-size:18px}
+p{margin:0;max-width:60ch}
+pre{margin:0;padding:14px;border-radius:10px;background:var(--cb);color:var(--ct);font:14px/1.5 ui-monospace,Consolas,monospace;overflow-x:auto}
+#ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#ctl:empty{display:none}
+button{font:inherit;cursor:pointer;border-radius:10px;border:2px solid var(--ln);background:var(--pn);color:var(--ink);padding:9px 14px}
+button:hover:not(:disabled){border-color:var(--ac)}
+button:focus-visible,input:focus-visible,canvas:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.sw{width:40px;height:40px;padding:0;border-radius:50%}
+.sel{border-color:var(--ac);background:var(--ln)}
+.quiz{border-top:2px dashed var(--ln);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+#opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left}.mono{font-family:ui-monospace,Consolas,monospace}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--pn))}
+.opt.bad{border-color:var(--bad);animation:sh .3s}
+@keyframes sh{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+#fb{min-height:1.5em;font-weight:600}
+#fb.ok{color:var(--ok)}#fb.bad{color:var(--bad)}
+.nav{display:flex;justify-content:space-between;margin-top:auto;padding-top:8px}
+.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+:root[data-theme="dark"] .pri{color:#0c1628}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pri{color:#0c1628}}
+#note{color:var(--mu);font-size:14px}
+.fin pre,.fin #note,.fin #ctl,.fin .quiz{display:none}
+@media (max-aspect-ratio:1/1){.app{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(200px,38%) minmax(0,1fr)}.panel{border-left:0;border-top:1px solid var(--ln)}h1{font-size:23px}}
+@media (max-height:480px){.panel{padding:12px 16px;gap:8px}h1{font-size:21px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+select{font:inherit;padding:8px 10px;border-radius:10px;border:2px solid var(--ln);background:var(--pn);color:var(--ink);max-width:100%}
+.demo{background:royalblue;color:#fff;border-color:royalblue}.demo:hover{background:gold;color:#222;border-color:gold}
+.demo:focus-visible{outline:4px solid gold;outline-offset:2px}
+.dg,.rf{display:grid;gap:8px;flex-basis:100%}.dg span,.rf span{background:var(--ln);border-radius:8px;padding:10px;text-align:center}
+.rf{border:2px dashed var(--ac);padding:8px;max-width:100%;box-sizing:border-box}
+.ex{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-basis:100%;border-top:2px dashed var(--ln);padding-top:10px}
+.ex label{flex-basis:100%;font-weight:700}
+.ex input{flex:1;min-width:0;font:14px ui-monospace,Consolas,monospace;padding:9px 10px;border-radius:10px;border:2px solid var(--ln);background:var(--cb);color:var(--ct)}
+.ex .st{flex-basis:100%;font-size:14px}.ex .st.ok{color:var(--ok)}.ex .st.bad{color:var(--bad)}
+.proj{display:none;flex-direction:column;gap:10px;border-top:2px dashed var(--ln);padding-top:14px}
+.fin .proj{display:flex}
+.proj textarea{width:100%;box-sizing:border-box;min-height:150px;resize:vertical;font:14px/1.5 ui-monospace,Consolas,monospace;padding:12px;border-radius:10px;border:2px solid var(--ln);background:var(--cb);color:var(--ct)}
+.proj iframe{width:100%;height:170px;border:2px solid var(--ln);border-radius:10px;background:#fff}
+.bl{padding:16px;border:2px solid var(--ln);border-radius:6px;background:var(--pn);cursor:pointer}
+.bl b{display:block;font-size:12px;margin-bottom:4px}
+.bl[data-n=margin]{background:color-mix(in srgb,#4dabf7 28%,var(--pn))}.bl[data-n=border]{background:color-mix(in srgb,#e03131 28%,var(--pn))}
+.bl[data-n=padding]{background:color-mix(in srgb,#ffa94d 32%,var(--pn))}.bl[data-n=content]{background:color-mix(in srgb,#51cf66 32%,var(--pn));padding:8px;text-align:center}
+.bl.on,.bl:focus-visible{outline:3px solid var(--ac)}
+#chk{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:14px}
+#chk li.on{color:var(--ok);font-weight:600}
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="stage">
+    <canvas id="c" aria-label="3D house that changes as you learn"></canvas>
+    <div class="tip">Drag to turn the house</div>
+    <div id="nogl" hidden>3D isn’t available on this device, but every lesson and quiz still works.</div>
+  </div>
+  <main class="panel">
+    <div class="top"><div class="bar"><i id="fill"></i></div><span id="stars"></span></div>
+    <p id="sn" style="font-size:13px;color:var(--mu)">Levels: ○ not started, ◐ learning, ✎ typed the code, ✓ mastered (quiz and typing). ★ = both questions right on the first try.</p>
+    <select id="jump" aria-label="Jump to a lesson"></select>
+    <span id="step"></span>
+    <h1 id="ttl"></h1>
+    <p id="body"></p>
+    <pre id="code"></pre>
+    <p id="note"></p>
+    <div id="ctl"></div>
+    <section class="quiz">
+      <h2 id="q"></h2>
+      <div id="opts"></div>
+      <p id="fb" aria-live="polite"></p>
+    </section>
+    <section class="proj" id="proj">
+      <h2 id="pt">Your turn: build a mini page</h2>
+      <p id="pd"></p>
+      <ul id="chk"></ul>
+      <textarea id="src" spellcheck="false" aria-label="Your page code"></textarea>
+      <div class="nav" style="margin-top:0;padding:0"><button id="pprev">Previous step</button><button id="preset">Start project over</button><button id="pnext" class="pri">Next step</button></div>
+      <iframe id="pv" sandbox="allow-same-origin" title="Preview of your page"></iframe>
+    </section>
+    <div class="nav"><button id="back">Back</button><button id="next" class="pri">Next lesson</button></div>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const L=[
+{t:"What is a website?",s:"a",b:"Every website you visit is made from simple written instructions. Your web browser (Chrome, Safari, Edge) reads them and draws the page on your screen. Think of the instructions as a house plan and the browser as the builder. Right now our plot is empty, so let’s start building.",c:"Make a big title that says Welcome.\nAdd a picture below it.\nPaint the background blue.",x:"This plan is written in plain English. HTML and CSS are the two special languages we use to write plans that a browser understands.",q:"What reads a website’s instructions and shows the page?",o:["A web browser","A web server","A search engine"],a:0,h:"It’s the app you’re using to read this page.",w:"The browser reads the instructions and builds the page on your screen.",q2:"Which two languages will you learn to write web page plans?",o2:["HTML and CSS","HTML and Python","CSS and Java"],a2:0,w2:"HTML builds the structure and CSS styles it."},
+{t:"HTML: the structure",s:"b",b:"HTML is the language that says what is on the page: a title, a paragraph, a picture. It’s the walls and frame of the house. HTML works with tags, which are labels in angle brackets like <p>. Most tags come in pairs: one opens, one closes.",c:"<p>Hello, world!</p>",x:"<p> opens a paragraph, the text is the content, and </p> closes it. The slash means “end here”.",q:"In a house, what is HTML closest to?",o:["The walls and frame","The paint color","The garden"],a:0,h:"HTML is about what is there, not how it looks.",w:"HTML builds the structure. CSS comes next and handles the looks.",q2:"What does the slash in </p> mean?",o2:["This tag is closing","A division sign","This tag is a comment"],a2:0,w2:"The slash marks the closing tag, which ends the element."},
+{t:"The page skeleton",s:"b",b:"Every HTML page has the same basic shape. <html> wraps everything. <head> holds behind-the-scenes info like the page title. <body> holds everything people see.",c:"<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\">\n    <title>My Home</title>\n  </head>\n  <body>\n    <h1>Hello!</h1>\n  </body>\n</html>",x:"The title shows on the browser tab. Only what’s inside <body> appears on the page itself. lang names the page’s language, and meta charset makes letters and symbols show correctly.",q:"Where does the content people see go?",o:["Inside <body>","Inside <head>","Inside <title>"],a:0,h:"Think of a person’s body: the visible part.",w:"<body> holds everything visible. <head> holds info about the page.",q2:"Where does the title shown on the browser tab go?",o2:["In <head> as <title>","In <body> as <h1>","After </html>"],a2:0,w2:"<title> lives in <head> and shows on the tab."},
+{t:"Headings and paragraphs",s:"h",b:"Text on a page comes in two main kinds: headings, which are titles, and paragraphs, which are normal text. <h1> is the biggest title, like the sign on the roof. Smaller headings go down to <h6>.",c:"<h1>My Home</h1>\n<h2>Living room</h2>\n<p>Welcome in!</p>",x:"The number is the size: 1 is biggest, 6 is smallest. <p> is for regular text.",q:"Which tag makes the biggest title?",o:["<h1>","<h6>","<p>"],a:0,h:"Number 1 means most important.",w:"<h1> is the biggest and most important heading. <h6> is the smallest.",q2:"Which tag is for a normal block of text?",o2:["<p>","<h1>","<ul>"],a2:0,w2:"<p> is a paragraph. Headings are <h1> to <h6>."},
+{t:"Lists",s:"l",b:"Lists keep things tidy. A bulleted list uses <ul> and a numbered list uses <ol>. Every item inside is wrapped in <li>.",c:"<ul>\n  <li>Kitchen</li>\n  <li>Bedroom</li>\n</ul>",x:"ul means unordered list (bullets), ol means ordered list (1, 2, 3), and li means list item.",q:"Which tag makes one item inside a list?",o:["<li>","<ul>","<p>"],a:0,h:"It’s short for list item.",w:"<li> is one item. <ul> and <ol> are the lists that hold them.",q2:"Which list shows 1, 2, 3 numbers?",o2:["<ol>","<ul>","<li>"],a2:0,w2:"<ol> is an ordered, numbered list. <ul> gives bullets."},
+{t:"Links and images",s:"d",b:"A link takes you to another page, like a door. An image shows a picture, like a window. These tags use attributes, which are extra settings written inside the tag.",c:"<a href=\"door.html\">Enter</a>\n<img src=\"window.png\" alt=\"A window\">",x:"href is where the link goes. src is the picture file. alt describes the picture in words, for people who can’t see it.",q:"Which attribute tells a link where to go?",o:["href","src","alt"],a:0,h:"It’s the address the link points to.",w:"href is the link’s address. src is the image file, and alt is its description.",q2:"Which attribute holds the picture file in <img>?",o2:["src","href","for"],a2:0,w2:"src is the image source, the file to show."},
+{t:"Page sections",s:"d",b:"Pages are split into areas, like rooms. <header> is the top, <nav> holds the menu links, <main> is the main content, and <footer> is the bottom. They also help search engines and screen readers understand your page.",c:"<header>My Home</header>\n<nav>Menu</nav>\n<main>Welcome!</main>\n<footer>My Home 2026</footer>",x:"These look plain until CSS styles them, but their names explain what each area is for.",q:"Which tag is for the menu links?",o:["<nav>","<footer>","<main>"],a:0,h:"It’s short for navigation.",w:"<nav> holds the navigation menu. <footer> is the bottom of the page.",q2:"Where would a copyright note go?",o2:["<footer>","<header>","<nav>"],a2:0,w2:"The footer sits at the bottom, where notes like copyright go."},
+{t:"div and span: generic containers",s:"d",b:"Sometimes no special tag fits. A <div> is a plain box that stacks on its own line, like a room. A <span> is a plain label inside a line of text, like a sticky note on one word. They do nothing alone, but with a class they become the hooks CSS uses to style and arrange things.",c:"<div class=\"card\">\n  <p>Today: <span class=\"hot\">sale</span> on doors!</p>\n</div>",x:"div is a block: it starts on a new line and fills the width. span is inline: it stays inside the line. Use meaningful tags like <header> or <nav> when one fits, and div or span when none does.",q:"Which tag highlights just one word inside a sentence?",o:["<span>","<div>","<main>"],a:0,h:"It stays inside the line.",w:"<span> is inline, so it wraps just the words you choose. <div> is a block.",q2:"What does a <div> do by itself?",o2:["Nothing visible; it only groups content","Makes text bold","Adds a border"],a2:0,w2:"A div has no look of its own. It groups things so CSS can style them."},
+{t:"Forms and buttons",s:"d",b:"Forms let visitors send information, like a name or a message. <input> is a box to type in, <label> names it, and <button> sends the form.",c:"<form>\n  <label for=\"name\">Name</label>\n  <input id=\"name\" name=\"name\" type=\"text\">\n  <button>Send</button>\n</form>",x:"for and id match, so the label and the box are linked: clicking the label focuses the box, and screen readers read it out. type says what kind of input it is, and name labels the data when the form is sent.",q:"Which tag makes a box where visitors can type?",o:["<input>","<label>","<form>"],a:0,h:"Typing something in is input.",w:"<input> is the typing box. <label> names it, and <form> holds it all.",q2:"Why link a <label> to an <input> with for and id?",o2:["It connects the label and box","It makes the box blue","It sends the form faster"],a2:0,w2:"A click on the label focuses the box, and screen readers read it out."},
+{t:"CSS: the style",s:"d",k:"color",b:"CSS is the language that says how things look: colors, sizes, spacing. It’s the paint and decoration. Same house, new look. Tap a color swatch and watch the walls change, then read the CSS code below.",c:"",x:".wall is a name we gave the house’s walls (a class, which you will meet properly soon). The part inside the curly braces says how. background-color is the paint, and the word after it is the color.",q:"What is CSS used for?",o:["Making a page look good","Writing the page’s words","Adding links between pages"],a:0,h:"Think paint and decoration.",w:"CSS controls looks: colors, fonts, sizes, and spacing.",q2:"In background-color: tomato; what is tomato?",o2:["The color value","The selector","The tag name"],a2:0,w2:"background-color is the property and tomato is its value."},
+{t:"Anatomy of a CSS rule",s:"d",k:"rule",b:"Every CSS rule has three parts. The selector says what to style. The property says which thing about it to change. The value says how. Pick one of each below and watch the rule and the sample change. Curly braces wrap the rule, and each setting ends with a semicolon.",c:"",x:"The shape is always selector { property: value; }. Rules live in a <style> tag or a .css file, separate from the HTML content, so you can restyle a page without touching what it says.",q:"In color: tomato; which part is the property?",o:["color","tomato","h1"],a:0,h:"It names the thing you are changing.",w:"color is the property and tomato is the value. The selector comes before the braces.",q2:"In h1 { color: tomato; } what does h1 do?",o2:["Picks what to style","Sets the color","Sets the size"],a2:0,w2:"The selector h1 picks which elements the rule applies to."},
+{t:"Selectors: pick what to style",s:"d",b:"A selector picks which elements a CSS rule styles. A tag selector like p styles every paragraph. A class selector, written with a dot, styles only items you gave that class. An id, written with #, styles one unique item.",c:"p { color: gray; }\n.big { font-size: 24px; }\n#logo { color: gold; }",x:"In HTML you attach a class like this: <p class=\"big\">. Many items can share a class, but an id is used only once.",q:"How do you write a class selector in CSS?",o:["With a dot, like .big","With a hash, like #big","With angle brackets, like <big>"],a:0,h:"A class starts with a small dot.",w:"Classes start with a dot. IDs start with #.",q2:"Which selector styles one unique item?",o2:["#logo","p",".big"],a2:0,w2:"An id such as #logo targets one unique item."},
+{t:"The cascade: who wins?",s:"d",k:"cas",b:"What if two rules style the same thing? CSS decides with the cascade. A more specific selector beats a less specific one: an id beats a class, and a class beats a plain tag. If two rules are equally specific, the one written later wins. Switch the rules on and off and watch the winner change.",c:"",x:"Specificity, weakest to strongest: tag, class, id. Children also inherit some properties, like color and font, from their parent unless a rule overrides them.",q:"Which selector is the most specific?",o:["#intro","p",".big"],a:0,h:"One of them is used only once.",w:"An id beats a class, and a class beats a tag.",q2:"Two rules are equally specific. Which one wins?",o2:["The one written later","The one written first","Neither; both are ignored"],a2:0,w2:"When specificity ties, the later rule wins."},
+{t:"Fonts and text",s:"d",b:"CSS controls how text looks: its size, font, weight, and alignment. Good text styling makes a page easy to read.",c:"h1 {\n  font-family: Arial, sans-serif;\n  font-size: 32px;\n  font-weight: bold;\n  text-align: center;\n}",x:"The font list is a backup plan. If the first font isn’t on the visitor’s device, the next one is used.",q:"Which property changes how big the text is?",o:["font-size","font-weight","text-align"],a:0,h:"The word “size” is in the name.",w:"font-size sets size, font-weight sets boldness, and text-align sets left, center, or right.",q2:"Which declaration centers the text?",o2:["text-align: center","font-size: center","font-weight: center"],a2:0,w2:"text-align: center centers text."},
+{t:"Units: px, %, rem and vw",s:"d",k:"unit",b:"CSS needs units for sizes. px is a fixed pixel. % is a share of the parent’s size. rem is a multiple of the page’s base font size, so text and spacing scale together. vw is a share of the browser window’s width. Pick a unit and watch the bar follow the rule.",c:"",x:"Use px for thin details like borders, % for flexible layouts, rem for text and spacing, and vw or vh for things tied to the screen size.",q:"Which unit is a share of the browser window’s width?",o:["vw","px","rem"],a:0,h:"The v stands for viewport.",w:"vw is 1% of the viewport width. % is relative to the parent instead.",q2:"Which unit scales with the page’s base font size?",o2:["rem","px","%"],a2:0,w2:"rem is relative to the root font size, so layouts scale with user settings."},
+{t:"Space around things",s:"p",k:"pad",b:"Every item on a page sits in an invisible box. Padding is the space inside the box, around the content. Margin is the space outside, pushing neighbors away. Drag the slider to grow the padding.",c:"",x:"px means pixels, the tiny dots on your screen. 16px is a small gap and 40px is a big one.",q:"Which one is the space inside the box, around the content?",o:["Padding","Margin","Heading"],a:0,h:"Think of padding in a jacket: it’s on the inside.",w:"Padding is inside the box. Margin is the space outside it.",q2:"Which one pushes neighbors away from the box?",o2:["Margin","Padding","Content"],a2:0,w2:"Margin is space outside the box. Padding is inside."},
+{t:"The box model",s:"q",k:"box",b:"Every element is a stack of four layers, like a framed picture on a wall. The content is the picture. Padding is the mat around it, the border is the frame, and the margin is the empty wall around the frame. Tap each layer, and notice the colored shells around the house.",c:".box {\n  padding: 16px;\n  border: 4px solid black;\n  margin: 20px;\n}",x:"From the inside out: content, padding, border, margin. Padding and border make the box bigger (by default; box-sizing: border-box keeps the total size fixed). Margin only pushes other things away.",q:"Which layer sits right around the content, inside the border?",o:["Padding","Margin","Border"],a:0,h:"It is the cushion between the content and the frame.",w:"Padding sits between content and border. Margin is outside the border.",q2:"Which layer is outside the border and pushes neighbors away?",o2:["Margin","Padding","Content"],a2:0,w2:"Margin is the space outside the border."},
+{t:"display: block, inline and none",s:"d",k:"disp",b:"Every element has a display type. Block elements like <div> and <p> stack, one per line. Inline elements like <span> flow along inside a line. display: none removes an element completely. Try each value on the middle box.",c:"",x:"You will meet display: flex and display: grid soon. They are other display values that arrange an element’s children.",q:"Which display value removes an element from the page completely?",o:["none","hidden","inline"],a:0,h:"It takes up no space either.",w:"display: none removes the element and its space.",q2:"Which kind of element starts on a new line and fills the width?",o2:["Block","Inline","None"],a2:0,w2:"Block elements stack, each on its own line."},
+{t:"Position: placing things exactly",s:"d",k:"pos",b:"Normally elements flow down the page in order. The position property lets you move one. relative nudges it from its normal spot. absolute pins it to an exact spot inside the nearest positioned parent. Pick a value and watch the red badge.",c:"",x:"With top and left set to 10px, absolute puts the badge 10px from the parent’s top-left corner. static, the default, ignores top and left. The parent needs position: relative.",q:"What does position: absolute do?",o:["Pins the element to an exact spot in its positioned parent","Keeps the element in the normal flow","Hides the element"],a:0,h:"Think of pinning a note to a board.",w:"Absolute removes the element from the flow and places it with top, left, right or bottom.",q2:"Which value ignores top and left?",o2:["static","relative","absolute"],a2:0,w2:"static is the default, so offsets have no effect."},
+{t:"Hover effects",s:"d",k:"hover",b:"CSS can react when someone points at something. Add :hover to a selector and the style applies only while the mouse is over it. It makes buttons feel alive.",c:"button {\n  background: royalblue;\n}\nbutton:hover {\n  background: gold;\n}\nbutton:focus-visible {\n  outline: 3px solid gold;\n}",x:"The button is blue normally and turns gold while the pointer is on it. Now press Tab until the demo button gets a gold outline: :focus-visible gives keyboard users the same kind of feedback, and touch screens have no hover at all, so never rely on hover alone.",q:"What does :hover do?",o:["Styles an item while the mouse is over it","Hides the item until you click it","Makes the item load faster"],a:0,h:"Hover means pointing without clicking.",w:":hover styles an item only while the mouse is over it.",q2:"What does button:hover target?",o2:["Pointed-at buttons","Every button, always","Only broken buttons"],a2:0,w2:"A :hover selector styles an element only while the pointer is on it."},
+{t:"Lining things up",s:"f",k:"flex",b:"Sometimes you want items side by side, like houses on a street. A tool called flexbox does that. Pick where the houses sit along the row, then switch the direction and alignment in the demo box.",c:"",x:"display: flex turns on the layout. flex-direction picks the main axis (row or column). justify-content spreads items along that main axis, and align-items places them across it.",q:"Which choice spreads items with equal gaps between them?",o:["space-between","flex-start","center"],a:0,h:"The name says the gaps go between the items.",w:"space-between puts the first and last items at the edges and spaces the rest evenly.",q2:"Which declaration turns on flexbox?",o2:["display: flex","position: flex","float: flex"],a2:0,w2:"display: flex switches on the flexible row layout."},
+{t:"Grid: rows and columns",s:"d",k:"grid",b:"Flexbox lines things up in one row or column. Grid arranges items in rows and columns together, like a floor plan. You say how many columns you want and the browser fills them.",c:".rooms {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 12px;\n}",x:"1fr means one share of the free space, so three of them make three equal columns. gap sets the space between cells.",q:"Which CSS tool arranges items in rows and columns together?",o:["Grid","Flexbox","Padding"],a:0,h:"Think of a grid of squares.",w:"Grid handles rows and columns at once. Flexbox works along one direction.",q2:"What does 1fr mean?",o2:["A share of the space","One tiny pixel","A single full row"],a2:0,w2:"fr stands for fraction: a share of the free space."},
+{t:"Looks good on phones too",s:"d",k:"resp",b:"People visit on phones, tablets, and computers. Responsive design makes a page adapt. A media query applies styles only when the screen is a certain size.",c:"@media (max-width: 600px) {\n  .rooms {\n    grid-template-columns: 1fr;\n  }\n}",x:"On screens 600px wide or smaller, the three columns become one column, which is easier to read on a phone. Pick a device size and change the max-width number: the preview is a real page that reads its own width, just like a browser window. On a real phone you also need <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> in <head>, or the media query never fires.",q:"What is a media query for?",o:["Changing styles for different screen sizes","Changing styles when the mouse is over something","Changing the font of every heading"],a:0,h:"It asks a question about the screen.",w:"Media queries apply styles only at certain screen sizes.",q2:"What does @media (max-width: 600px) apply to?",o2:["Screens 600px or narrower","Screens wider than 600px","Only printers"],a2:0,w2:"max-width: 600px matches screens 600px wide or narrower."},
+{t:"Your first real page",s:"d",k:"setup",b:"Time to leave the course and make a real page on your own computer. Follow the steps below and tick each one as you go. CSS can live inside the page in a <style> tag, or in its own file that you connect with a <link> tag. Tip: right-click any website and choose Inspect to see its HTML and CSS.",c:"<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>My Home</title>\n    <style>\n      h1 { color: tomato; }\n    </style>\n    <!-- or: <link rel=\"stylesheet\" href=\"style.css\"> -->\n  </head>\n  <body>\n    <h1>Hello!</h1>\n  </body>\n</html>",x:"<style> goes inside <head>. With a separate file, the <link> tag loads it. The viewport meta tag makes phones use their real screen width, which media queries need. Inspect works on every website, so you can learn from real pages.",q:"Which file ending makes your page open as a website in a browser?",o:[".html",".css",".site"],a:0,h:"It’s the same language as the first half of this course.",w:"A file ending in .html is read as a page. A .css file holds styles.",q2:"Which tag connects a separate CSS file to your page?",o2:["<link>","<a>","<script>"],a2:0,w2:"<link rel=\"stylesheet\" href=\"style.css\"> goes in <head> and loads the styles."},
+{t:"Put it all together",s:"d",b:"You now have the whole toolkit. HTML builds the structure and CSS styles it. A tiny finished page uses both: tags for the content and a rule to style it.",c:"<h1 class=\"title\">My Home</h1>\n<p>Welcome in!</p>\n\n.title {\n  color: tomato;\n  text-align: center;\n}",x:"The h1 tag is HTML. The .title rule is CSS, and the class connects the two.",q:"Which part of this page is the CSS?",o:[".title { color: tomato; }","<h1>My Home</h1>","<p>Welcome in!</p>"],a:0,h:"CSS has curly braces and properties.",w:"The rule with curly braces is CSS. The tags are HTML.",q2:"What connects the HTML class to the CSS rule?",o2:["The matching name","The page title","The footer tag"],a2:0,w2:"class=\"title\" in HTML matches .title in CSS."},
+];
+const D=["base","walls","roof","door","win"],E=D.concat(["sign","list","garden"]),SC={a:["base"],b:["base","walls"],c:["base","walls","roof"],h:["base","walls","roof","sign"],l:["base","walls","roof","sign","list"],d:E,p:E.concat(["pad","mar"]),q:E.concat(["pad","bor","mar"]),f:["flex"]};
+const st={color:"tomato",pad:16,fl:"flex-start",cols:3,w:340,rs:"h1",rp:"color",rv:"tomato",bx:"padding",fd:"row",ai:"flex-start",bp:600,dev:375,un:"200px",dis:"block",pos:"static",cs:[true,true,false]};
+const FX={"flex-start":[-2.6,-1.6,-.6],"center":[-1,0,1],"space-between":[-2.6,0,2.6]};
+const $=id=>document.getElementById(id);
+let i=0,qn=0,tried=false,solved=false,GL=null,draft={i:-1,v:""};const miss={},got={},ex={};const stars=()=>L.reduce((n,_,j)=>n+(got[j]>=2&&!miss[j]?1:0),0);
+
+/* ---------- 3D ---------- */
+function init3D(){
+  try{
+    if(typeof THREE==="undefined")throw 0;
+    const cv=$("c"),r=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+    const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(40,1,.1,100);
+    cam.position.set(5,3.2,8);cam.lookAt(0,0,0);
+    scene.add(new THREE.HemisphereLight(0xffffff,0x8899bb,.95));
+    const sun=new THREE.DirectionalLight(0xffffff,.8);sun.position.set(4,6,5);scene.add(sun);
+    const world=new THREE.Group();scene.add(world);
+    const P={},mat=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.7},o||{}));
+    const wallMat=mat(0xb8b8c4);
+    function part(n,g,m,x,y,z){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.userData={v:0,g:0,k:1};P[n]=o;world.add(o);return o}
+    part("base",new THREE.BoxGeometry(3.4,.2,3.4),mat(0x7d8aa6),0,-1,0);
+    part("walls",new THREE.BoxGeometry(2.6,1.6,2.6),wallMat,0,-.1,0);
+    part("roof",new THREE.ConeGeometry(2.2,1.2,4),mat(0x7a4b3a),0,1.3,0).rotation.y=Math.PI/4;
+    part("door",new THREE.BoxGeometry(.6,1,.1),mat(0x5b3a29),0,-.4,1.32);
+    part("win",new THREE.BoxGeometry(.6,.6,.1),mat(0x9ad0ff),.8,.15,1.32);
+    part("pad",new THREE.BoxGeometry(2.8,1.8,2.8),mat(0xffa94d,{transparent:true,opacity:.28}),0,-.1,0);
+    part("mar",new THREE.BoxGeometry(4.4,2.6,4.4),mat(0x4dabf7,{transparent:true,opacity:.14}),0,-.1,0);
+    part("bor",new THREE.BoxGeometry(3.4,2.3,3.4),mat(0xe03131,{transparent:true,opacity:.22}),0,-.1,0);
+    part("sign",new THREE.BoxGeometry(1.4,.25,.1),mat(0xffd43b),0,.75,1.32);
+    const lst=new THREE.Group();lst.userData={v:0,g:0,k:1};P.list=lst;world.add(lst);
+    [.2,-.05,-.3].forEach(y=>{const m=new THREE.Mesh(new THREE.BoxGeometry(.6,.12,.1),mat(0xffffff));m.position.set(-.8,y,1.32);lst.add(m)});
+    const flex=new THREE.Group();flex.position.y=-.4;P.flex=flex;flex.userData={v:0,g:0,k:1};world.add(flex);
+    const plate=new THREE.Mesh(new THREE.BoxGeometry(6.4,.1,1.8),mat(0x7d8aa6));plate.position.y=-.5;flex.add(plate);
+    const mini=[0xff6b6b,0xffd43b,0x51cf66].map(c=>{const h=new THREE.Group();
+      h.add(new THREE.Mesh(new THREE.BoxGeometry(1,.8,1),mat(c)));
+      const rf=new THREE.Mesh(new THREE.ConeGeometry(.85,.6,4),mat(0x7a4b3a));rf.position.y=.7;rf.rotation.y=Math.PI/4;h.add(rf);
+      flex.add(h);return h});
+    const kb=new THREE.Mesh(new THREE.SphereGeometry(.05,12,8),mat(0xffd43b));kb.position.set(.2,0,.07);P.door.add(kb);
+    const wf=new THREE.Mesh(new THREE.BoxGeometry(.74,.74,.08),mat(0xffffff));wf.position.z=-.01;P.win.add(wf);
+    [[.6,.05],[.05,.6]].forEach(a=>{const b=new THREE.Mesh(new THREE.BoxGeometry(a[0],a[1],.12),mat(0xffffff));P.win.add(b)});
+    const ch=new THREE.Mesh(new THREE.BoxGeometry(.25,.5,.25),mat(0x8d5a4a));ch.position.set(.5,.15,0);P.roof.add(ch);
+    const gd=new THREE.Group();gd.userData={v:0,g:0,k:1};gd.position.set(1.45,-.9,1.4);P.garden=gd;world.add(gd);
+    const tr=new THREE.Mesh(new THREE.CylinderGeometry(.06,.08,.4,8),mat(0x6b4226));tr.position.y=.2;gd.add(tr);
+    const lf=new THREE.Mesh(new THREE.SphereGeometry(.3,14,10),mat(0x3a9d54));lf.position.y=.6;gd.add(lf);
+    let drag=false,lx=0;
+    cv.addEventListener("pointerdown",e=>{drag=true;lx=e.clientX;cv.setPointerCapture(e.pointerId)});
+    cv.addEventListener("pointermove",e=>{if(drag){world.rotation.y+=(e.clientX-lx)*.01;lx=e.clientX}});
+    ["pointerup","pointercancel"].forEach(t=>cv.addEventListener(t,()=>drag=false));
+    function fit(){const s=$("stage"),w=s.clientWidth,h=s.clientHeight;if(!w||!h)return;r.setPixelRatio(Math.min(devicePixelRatio||1,2));r.setSize(w,h,false);cam.aspect=w/h;const t=Math.tan(cam.fov*Math.PI/360),dist=Math.max(3.7/t,4/(t*cam.aspect));cam.position.set(5,3.2,8).setLength(dist);cam.lookAt(0,0,0);cam.updateProjectionMatrix()}
+    new ResizeObserver(fit).observe($("stage"));fit();
+    const goal=new THREE.Color(0xb8b8c4);
+    (function tick(){requestAnimationFrame(tick);if(document.hidden)return;
+      if(!drag)world.rotation.y+=.004;
+      for(const n in P){const u=P[n].userData;u.v+=(u.g-u.v)*.12;P[n].scale.setScalar(Math.max(u.v*u.k,.0001))}
+      wallMat.color.lerp(goal,.1);
+      mini.forEach((m,j)=>m.position.x+=(FX[st.fl][j]-m.position.x)*.1);
+      r.render(scene,cam)})();
+    GL={P,goal};
+  }catch(e){$("c").hidden=true;$("nogl").hidden=false;$("stage").querySelector(".tip").hidden=true}
+}
+
+function applyScene(){
+  if(!GL)return;
+  const v=SC[i<L.length?L[i].s:"d"];
+  for(const n in GL.P)GL.P[n].userData.g=v.includes(n)?1:0;
+  GL.goal.set(i>=L.findIndex(l=>l.k==="color")?st.color:"#b8b8c4");
+  GL.P.pad.userData.k=1+st.pad/200;
+}
+
+/* ---------- Type-it exercises ---------- */
+const SU=(()=>{try{return JSON.parse(localStorage.getItem("hcc-house-v5-su")||"[]")}catch(e){return[]}})();
+const CR=[["p","gray",1],[".big","tomato",2],["#intro","royalblue",3]];
+const EX={
+7:{p:"Type a div that says Box.",re:/^<div[^>]*>\s*\S.*<\/div>$/i,h:"Open the div tag, add text, close it."},
+12:{p:"Type a rule that makes the element with id intro orange.",re:/^#intro\s*\{\s*color\s*:\s*orange\s*;?\s*\}$/i,h:"An id selector starts with #."},
+14:{p:"Type a declaration that makes the width half of its parent.",re:/^width\s*:\s*50%\s*;?$/i,h:"Use a percentage."},
+17:{p:"Type a declaration that hides an element completely.",re:/^display\s*:\s*none\s*;?$/i,h:"It is a display value."},
+18:{p:"Type a declaration that makes an element absolutely positioned.",re:/^position\s*:\s*absolute\s*;?$/i,h:"Property position, value absolute."},
+2:{p:"Type the title tag that says My Home.",re:/^<title>\s*\S.*<\/title>$/i,h:"The title is wrapped in a title tag."},
+6:{p:"Type a navigation tag that says Menu.",re:/^<nav>\s*\S.*<\/nav>$/i,h:"It is short for navigation."},
+8:{p:"Type a button that says Send.",re:/^<button[^>]*>\s*Send\s*<\/button>$/i,h:"Open the tag, add the text, close it."},
+9:{p:"Type a declaration that sets the background color to skyblue.",re:/^background-color\s*:\s*skyblue\s*;?$/i,h:"Property, colon, value, semicolon."},
+15:{p:"Type a declaration that sets a margin of 20px.",re:/^margin\s*:\s*20px\s*;?$/i,h:"Margin is the space outside the box."},
+19:{p:"Type a rule that turns a button gold while hovered.",re:/^button:hover\s*\{\s*background(-color)?\s*:\s*gold\s*;?\s*\}$/i,h:"Selector with :hover, then braces."},
+21:{p:"Type a declaration that makes two equal columns.",re:/^grid-template-columns\s*:\s*(repeat\(\s*2\s*,\s*1fr\s*\)|1fr\s+1fr)\s*;?$/i,h:"Two shares of space: 1fr and 1fr."},
+22:{p:"Type the media query for screens 600px wide or narrower.",re:/^@media\s*\(\s*max-width\s*:\s*600px\s*\)\s*\{?$/i,h:"@media, then the condition in brackets."},
+23:{p:"Type the tag that loads a CSS file called style.css.",re:/^<link\s+rel\s*=\s*["']stylesheet["']\s+href\s*=\s*["']style\.css["']\s*\/?>$/i,h:"A link tag with rel and href."},
+24:{p:"Type a rule that makes .title red.",re:/^\.title\s*\{\s*color\s*:\s*red\s*;?\s*\}$/i,h:"Class selector, braces, property: value;"},
+1:{p:"Type a paragraph that says Hi.",re:/^<p>\s*\S.*<\/p>$/i,h:"Open with <p>, add text, close with </p>."},
+3:{p:"Type the biggest heading, saying Home.",re:/^<h1>\s*\S.*<\/h1>$/i,h:"The biggest heading is number 1, and it needs a closing tag."},
+4:{p:"Type one list item that says Kitchen.",re:/^<li>\s*\S.*<\/li>$/i,h:"Wrap the text in a list item tag and close it."},
+5:{p:"Type a link to door.html that says Enter.",re:/^<a\s+href\s*=\s*["']door\.html["']\s*>\s*Enter\s*<\/a>$/i,h:"An <a> tag with an href attribute, the text, then </a>."},
+10:{p:"Type a rule that colors every h1 tomato.",re:/^h1\s*\{\s*color\s*:\s*tomato\s*;?\s*\}$/i,h:"Selector, braces, then property: value;"},
+11:{p:"Type a rule that makes every p gray.",re:/^p\s*\{\s*color\s*:\s*gray\s*;?\s*\}$/i,h:"Selector, curly braces, then property: value;"},
+13:{p:"Type a declaration that sets the font size to 20px.",re:/^font-size\s*:\s*20px\s*;?$/i,h:"Property, colon, value, semicolon."},
+16:{p:"Type a declaration that gives 16px of padding.",re:/^padding\s*:\s*16px\s*;?$/i,h:"Property, colon, value, semicolon."},
+20:{p:"Type the declaration that turns on flexbox.",re:/^display\s*:\s*flex\s*;?$/i,h:"It starts with display."}
+};
+const H2=["One builds structure, the other styles it.", "It appears only in the second tag of a pair.", "The tab title is info about the page, not page content.", "Headings are titles; this one is plain text.", "The o stands for ordered.", "It is short for source.", "It sits at the very bottom.", "Think of an empty box with no paint.", "Clicking the label does something to the box.", "Look at what comes after the colon.", "It comes before the curly braces.", "It starts with #.", "Read the rules from top to bottom.", "The property name has the word align in it.", "It starts with r, for root.", "It is on the outside, like a gap between neighbors.", "It is the outermost layer.", "It stacks one per line.", "It is the default value.", "Hover only happens while the pointer is on it.", "It is a display value.", "fr stands for fraction.", "max means up to and including 600px.", "It goes in <head> and has rel=stylesheet.", "Compare the names after class= and after the dot."];
+const NAMES=["Not started","Learning","Practiced","Mastered"];
+function mast(j){const q=got[j]>=2,t=EX[j]?!!ex[j]:true;return q&&t?3:ex[j]?2:(got[j]>=1||miss[j])?1:0}
+function jumpLabels(){[...$("jump").options].forEach((o,j)=>{if(j<L.length)o.text=["○ ","◐ ","✎ ","✓ "][mast(j)]+(j+1)+". "+L[j].t});if(i<L.length)$("step").textContent="Lesson "+(i+1)+" of "+L.length+" · "+NAMES[mast(i)]}
+function opts(c,arr,key){const d=document.createElement("div");d.style.cssText="flex-basis:100%;display:flex;gap:8px;flex-wrap:wrap";arr.forEach(v=>{const b=document.createElement("button");b.textContent=v;b.className=v===st[key]?"sel":"";b.onclick=()=>{st[key]=v;controls();$("code").textContent=codeText()};d.append(b)});c.append(d)}
+function exBox(c){
+  const e=EX[i];if(!e)return;
+  const w=document.createElement("div");w.className="ex";
+  const l=document.createElement("label");l.textContent="Try it: "+e.p;l.htmlFor="exin";
+  const f=document.createElement("input");f.id="exin";f.type="text";f.placeholder="type it here";f.autocomplete="off";f.spellcheck=false;if(draft.i===i)f.value=draft.v;f.oninput=()=>{draft={i,v:f.value}};
+  const b=document.createElement("button");b.textContent="Check";
+  const s=document.createElement("span");s.className="st";s.setAttribute("aria-live","polite");
+  if(ex[i]){s.className="st ok";s.textContent="✓ You typed this one correctly."}
+  const go=()=>{const v=f.value.trim().replace(/\s+/g," ");
+    if(e.re.test(v)){ex[i]=1;s.className="st ok";s.textContent="✓ Correct! That is real, working code.";save();jumpLabels()}
+    else{s.className="st bad";s.textContent="Not quite. Hint: "+e.h}};
+  b.onclick=go;f.onkeydown=ev=>{if(ev.key==="Enter")go()};
+  w.append(l,f,b,s);c.append(w)}
+
+/* ---------- Lesson UI ---------- */
+function codeText(){
+  if(L[i].k==="color")return ".wall {\n  background-color: "+st.color+";\n}";
+  if(L[i].k==="resp")return "@media (max-width: "+st.bp+"px) {\n  .rooms {\n    grid-template-columns: 1fr;\n  }\n}";
+  if(L[i].k==="cas")return CR.filter((r,n)=>st.cs[n]).map(r=>r[0]+" { color: "+r[1]+"; }").join("\n")||"/* no rules switched on */";
+  if(L[i].k==="unit")return ".bar {\n  width: "+st.un+";\n}";
+  if(L[i].k==="disp")return ".box-b {\n  display: "+st.dis+";\n}";
+  if(L[i].k==="pos")return ".badge {\n  position: "+st.pos+";\n  top: 10px;\n  left: 10px;\n}";
+  if(L[i].k==="rule")return st.rs+" {\n  "+st.rp+": "+st.rv+";\n}";
+  if(L[i].k==="pad")return ".house {\n  padding: "+st.pad+"px;\n  margin: 10px;\n}";
+  if(L[i].k==="flex")return ".row {\n  display: flex;\n  flex-direction: "+st.fd+";\n  justify-content: "+st.fl+";\n  align-items: "+st.ai+";\n}";
+  if(L[i].k==="grid")return ".rooms {\n  display: grid;\n  grid-template-columns: "+Array(st.cols).fill("1fr").join(" ")+";\n  gap: 12px;\n}";
+  return L[i].c;
+}
+function controls(){
+  const c=$("ctl"),SEL="button,select,input,[tabindex]",ae=document.activeElement,fi=ae&&c.contains(ae)?[...c.querySelectorAll(SEL)].indexOf(ae):-1;c.innerHTML="";
+  if(L[i].k==="color")["tomato","skyblue","gold","mediumseagreen"].forEach(k=>{
+    const b=document.createElement("button");b.className="sw"+(k===st.color?" sel":"");b.style.background=k;b.setAttribute("aria-label","Paint walls "+k);
+    b.onclick=()=>{st.color=k;if(GL)GL.goal.set(k);controls();$("code").textContent=codeText()};c.append(b)});
+  if(L[i].k==="pad"){
+    const l=document.createElement("label");l.textContent="padding ";
+    const s=document.createElement("input");s.type="range";s.min=0;s.max=40;s.value=st.pad;
+    s.oninput=()=>{st.pad=+s.value;if(GL)GL.P.pad.userData.k=1+st.pad/200;$("code").textContent=codeText()};
+    l.append(s);c.append(l)}
+  if(L[i].k==="flex")["flex-start","center","space-between"].forEach(k=>{
+    const b=document.createElement("button");b.textContent=k;b.className=k===st.fl?"sel":"";
+    b.onclick=()=>{st.fl=k;controls();$("code").textContent=codeText()};c.append(b)});
+  const K=L[i].k,cell=n=>{const d=document.createElement("div");for(let j=1;j<=n;j++){const e=document.createElement("span");e.textContent=j;d.append(e)}return d};
+  if(K==="hover"){const b=document.createElement("button");b.className="demo";b.textContent="Point at me";c.append(b)}
+  if(K==="grid"){[1,2,3,4].forEach(n=>{const b=document.createElement("button");b.textContent=n+(n>1?" columns":" column");b.className=n===st.cols?"sel":"";b.onclick=()=>{st.cols=n;controls();$("code").textContent=codeText()};c.append(b)});
+    const g=cell(6);g.className="dg";g.style.gridTemplateColumns="repeat("+st.cols+",1fr)";c.append(g)}
+  if(K==="resp"){const D={Phone:375,Tablet:768,Desktop:1100};
+    const wrap=document.createElement("div");wrap.style.cssText="flex-basis:100%;display:grid;gap:8px";
+    const row=document.createElement("div");row.style.cssText="display:flex;gap:8px;flex-wrap:wrap;align-items:center";
+    Object.entries(D).forEach(([n,w])=>{const bt=document.createElement("button");bt.textContent=n+" "+w;bt.className=w===st.dev?"sel":"";bt.onclick=()=>{st.dev=w;controls()};row.append(bt)});
+    const lb=document.createElement("label"),nm=document.createElement("input");lb.append("max-width ");nm.type="number";nm.min=200;nm.max=1200;nm.value=st.bp;nm.style.width="76px";nm.oninput=()=>{st.bp=+nm.value||600;draw()};lb.append(nm," px");row.append(lb);
+    const box=document.createElement("div"),fr=document.createElement("iframe");box.style.cssText="overflow:hidden;height:170px;border:2px dashed var(--ac);border-radius:8px";
+    fr.setAttribute("sandbox","");fr.title="Responsive preview";fr.style.cssText="border:0;background:#fff;transform-origin:0 0;display:block";box.append(fr);wrap.append(row,box);c.append(wrap);
+    function draw(){const s=Math.min(1,(box.clientWidth||300)/st.dev);fr.style.width=st.dev+"px";fr.style.height=(170/s)+"px";fr.style.transform="scale("+s+")";
+      fr.srcdoc="<style>body{font:16px sans-serif;margin:8px}.r{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}span{background:#cfd8f5;padding:14px;text-align:center;border-radius:6px}@media (max-width:"+st.bp+"px){.r{grid-template-columns:1fr}}</style><div class=r><span>Kitchen</span><span>Bedroom</span><span>Garden</span></div><p>"+st.dev+"px wide</p>";
+      $("code").textContent=codeText()}
+    draw()}
+  if(K==="flex"){
+    const rw=(arr,key,lab)=>{const d=document.createElement("div");d.style.cssText="flex-basis:100%;display:flex;gap:8px;flex-wrap:wrap;align-items:center";d.append(lab+": ");arr.forEach(v=>{const bt=document.createElement("button");bt.textContent=v;bt.className=v===st[key]?"sel":"";bt.onclick=()=>{st[key]=v;controls();$("code").textContent=codeText()};d.append(bt)});return d};
+    const dm=document.createElement("div");dm.style.cssText="flex-basis:100%;display:flex;height:110px;gap:6px;padding:6px;border:2px dashed var(--ac);border-radius:8px;box-sizing:border-box;flex-direction:"+st.fd+";justify-content:"+st.fl+";align-items:"+st.ai;
+    [1,2,3].forEach(n=>{const sp=document.createElement("span");sp.textContent=n;sp.style.cssText="background:var(--ln);border-radius:6px;padding:8px 14px";dm.append(sp)});
+    c.append(rw(["row","column"],"fd","flex-direction"),rw(["flex-start","center","flex-end"],"ai","align-items"),dm)}
+  if(K==="setup"){const T=["Open a plain-text editor: Notepad on Windows, TextEdit in plain-text mode on a Mac, or VS Code.","Create a new, empty file.","Type or copy the skeleton from the code box above.","Save it as index.html. Choose “All files” or “Plain text” so it doesn’t become index.html.txt.","Double-click index.html. It opens in your browser.","Change the words inside the <h1>, save, and go back to the browser.","Refresh the tab and see your change appear."];
+    const ol=document.createElement("div");ol.style.cssText="flex-basis:100%;display:grid;gap:6px";const cn=document.createElement("p");
+    const upd=()=>{cn.textContent=SU.filter(Boolean).length+" of "+T.length+" steps done"};
+    T.forEach((t,n)=>{const lb=document.createElement("label"),ck=document.createElement("input");ck.type="checkbox";ck.checked=!!SU[n];ck.onchange=()=>{SU[n]=ck.checked;try{localStorage.setItem("hcc-house-v5-su",JSON.stringify(SU))}catch(e){}upd()};lb.append(ck," "+(n+1)+". "+t);ol.append(lb)});upd();c.append(ol,cn)}
+  if(K==="rule"){const V={"color":["tomato","gray","royalblue"],"font-size":["16px","24px","32px"],"background-color":["gold","skyblue","lightgreen"]};
+    const mk=(lab,arr,key)=>{const l=document.createElement("label"),s=document.createElement("select");arr.forEach(v=>s.add(new Option(v,v)));s.value=st[key];
+      s.onchange=()=>{st[key]=s.value;if(key==="rp")st.rv=V[st.rp][0];controls();$("code").textContent=codeText()};l.append(lab+" ",s);return l};
+    const d=document.createElement("div");d.textContent="Sample text";d.style.cssText="flex-basis:100%;padding:10px;border:2px dashed var(--ln);border-radius:8px";d.style.setProperty(st.rp,st.rv);
+    c.append(mk("Selector",["h1","p",".big"],"rs"),mk("Property",Object.keys(V),"rp"),mk("Value",V[st.rp],"rv"),d)}
+  if(K==="box"){const D2={margin:"Margin: space outside the border, pushing neighbors away.",border:"Border: the frame around the padding.",padding:"Padding: space inside the border, around the content.",content:"Content: the text or picture itself."};
+    const w=document.createElement("div");w.style.flexBasis="100%";let h="";
+    ["margin","border","padding","content"].forEach(n=>{h+="<div class=\"bl"+(n===st.bx?" on":"")+"\" data-n=\""+n+"\" tabindex=\"0\" role=\"button\" aria-pressed=\""+(n===st.bx)+"\"><b>"+n+"</b>"});
+    w.innerHTML=h+"</div></div></div></div>";w.onclick=e=>{const t=e.target.closest(".bl");if(t){st.bx=t.dataset.n;controls()}};w.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){const t=e.target.closest(".bl");if(t){e.preventDefault();st.bx=t.dataset.n;controls()}}};
+    const p=document.createElement("p");p.textContent=D2[st.bx];c.append(w,p)}
+  const mkd=(css,txt)=>{const d=document.createElement("div");d.style.cssText=css;if(txt)d.textContent=txt;return d};
+  if(K==="cas"){CR.forEach((r,n)=>{const lb=document.createElement("label"),ck=document.createElement("input");ck.type="checkbox";ck.checked=st.cs[n];
+      ck.onchange=()=>{st.cs[n]=ck.checked;controls();$("code").textContent=codeText()};lb.style.flexBasis="100%";lb.append(ck," "+r[0]+" { color: "+r[1]+"; }");c.append(lb)});
+    const on=CR.filter((r,n)=>st.cs[n]),w=on.length?on.reduce((x,y)=>y[2]>=x[2]?y:x):null;
+    c.append(mkd("flex-basis:100%;font-size:22px;font-weight:700;color:"+(w?w[1]:"inherit"),"My Home"),mkd("flex-basis:100%;font-size:14px",w?"Winner: "+w[0]+" ("+w[1]+")":"No rule is on, so the default color is used."))}
+  if(K==="unit"){opts(c,["200px","50%","10rem","20vw"],"un");const pr=mkd("flex-basis:100%;border:2px dashed var(--ln);padding:6px;border-radius:8px;box-sizing:border-box;overflow:hidden");
+    pr.append(mkd("font-size:12px;color:var(--mu)","parent box"),mkd("height:26px;border-radius:6px;background:var(--ac);width:"+st.un));c.append(pr)}
+  if(K==="disp"){opts(c,["block","inline","inline-block","none"],"dis");const pr=mkd("flex-basis:100%;border:2px dashed var(--ln);padding:8px;border-radius:8px;box-sizing:border-box;line-height:2");
+    const bx=(t,d)=>mkd("background:var(--ln);padding:2px 12px;border-radius:6px;display:"+d,t);pr.append(bx("A","block"),bx("B (this one)",st.dis),bx("C","block"));c.append(pr)}
+  if(K==="pos"){opts(c,["static","relative","absolute"],"pos");const pr=mkd("flex-basis:100%;position:relative;height:90px;border:2px dashed var(--ln);border-radius:8px;box-sizing:border-box;padding:8px","The parent box (position: relative). Normal text flows here.");
+    const bd=mkd("background:#e03131;color:#fff;border-radius:6px;padding:2px 8px;display:inline-block;position:"+st.pos+";top:10px;left:10px","badge");pr.append(bd);c.append(pr)}
+  exBox(c);
+  if(fi>=0){const n=[...c.querySelectorAll(SEL)][fi];if(n)n.focus()}
+}
+function render(){
+  const done=i>=L.length;tried=false;solved=false;
+  const J=$("jump");J.innerHTML="";L.forEach((l,j)=>J.add(new Option(l.t,j)));J.add(new Option("Finish line",L.length));J.value=i;
+  document.body.classList.toggle("fin",done);
+  $("fill").style.width=Math.min(i/L.length,1)*100+"%";
+  $("stars").innerHTML="<b>★</b> "+stars()+" / "+L.length;
+  $("back").disabled=i===0;
+  if(done){
+    $("step").textContent="Course complete";$("ttl").textContent="You built the house!";
+    $("body").textContent="You earned "+stars()+" of "+L.length+" first-try stars and typed "+Object.keys(ex).length+" of "+Object.keys(EX).length+" code snippets correctly. You now know what a website is, what HTML and CSS do, and how tags, forms, selectors, the cascade, fonts, units, display, position, flexbox, grid, and responsive design work. Now try the mini project below and tick every box.";
+    $("next").textContent="Start again";$("next").disabled=false;chk();
+  }else{
+    const l=L[i];
+    $("step").textContent="Lesson "+(i+1)+" of "+L.length;$("ttl").textContent=l.t;$("body").textContent=l.b;
+    $("code").textContent=codeText();$("note").textContent=l.x;controls();
+    qn=got[i]===1?1:0;showQ();
+  }
+  jumpLabels();applyScene();
+}
+const isCode=t=>/^[<.#]|[{};]|^[a-z-]+:\s|^[a-z]+(-[a-z]+)+$|^(href|src|alt|for|center|color|tomato|none|hidden|inline|static|relative|absolute|vw|px|rem|%|p|h1)$/.test(t);
+const KEY="hcc-house-v5";
+function save(){try{localStorage.setItem(KEY,JSON.stringify({i,got,miss,ex}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d){Object.assign(got,d.got||{});Object.assign(miss,d.miss||{});Object.assign(ex,d.ex||{});i=Math.min(Math.max(+d.i||0,0),L.length)}}catch(e){}}
+function cur(){const l=L[i];return qn?{q:l.q2,o:l.o2,a:l.a2,h:H2[i]||"Look back at the code box.",w:l.w2}:l}
+function showQ(){
+  const l=L[i],c=cur(),fb=$("fb"),nx=$("next"),last=i===L.length-1;
+  solved=false;fb.textContent="";fb.className="";
+  $("q").textContent="Question "+(qn+1)+" of 2: "+c.q;
+  const o=$("opts");o.innerHTML="";
+  c.o.map((t,j)=>[t,j]).sort(()=>Math.random()-.5).forEach(([t,j])=>{const b=document.createElement("button");b.className="opt"+(isCode(t)?" mono":"");b.textContent=t;b.onclick=()=>pick(b,j);o.append(b)});
+  if(got[i]>=2){fb.className="ok";fb.textContent="You have completed this lesson. Answer again to review, or move on.";nx.textContent=last?"Finish":"Next lesson";nx.disabled=false}
+  else{nx.textContent=qn?(last?"Finish":"Next lesson"):"Next question";nx.disabled=true}
+}
+function pick(b,j){
+  if(solved)return;const c=cur(),fb=$("fb");
+  if(j===c.a){solved=true;got[i]=Math.max(got[i]||0,qn+1);b.classList.add("ok");fb.className="ok";fb.textContent="Correct! "+c.w;$("next").disabled=false;$("stars").innerHTML="<b>★</b> "+stars()+" / "+L.length}
+  else{if(!(got[i]>=2))miss[i]=1;b.classList.add("bad");b.disabled=true;fb.className="bad";fb.textContent="Not quite. Hint: "+c.h}
+  save();jumpLabels();
+}
+$("next").onclick=()=>{if(i>=L.length){i=0;qn=0;for(const k in got)delete got[k];for(const k in miss)delete miss[k];for(const k in ex)delete ex[k];SU.length=0;try{localStorage.removeItem(KEY+"-su")}catch(e){}resetProj()}else if(got[i]===1&&qn===0){qn=1;showQ();return}else{i++;qn=0}save();render()};
+$("back").onclick=()=>{if(i>0){i--;save();render()}};
+$("jump").onchange=e=>{i=+e.target.value;save();render()};
+/* ---------- Guided project ---------- */
+const PK=KEY+"-proj2",SRC=$("src"),qa=(d,s)=>{try{return[...d.querySelectorAll(s)]}catch(e){return[]}};
+const cs=(d,e)=>d.defaultView.getComputedStyle(e);
+const css=d=>qa(d,"style").map(s=>s.textContent).join("\n").replace(/\/\*[\s\S]*?\*\//g,"");
+const clsHit=d=>[...css(d).matchAll(/([^{}]+)\{[^}]*\}/g)].some(m=>[...m[1].matchAll(/\.[a-z][\w-]*/gi)].some(c=>qa(d,c[0]).length));
+const rl=d=>qa(d,"ul").find(u=>u.querySelectorAll(":scope > li").length>=3);
+const STEPS=[
+{t:"Step 1 of 6: The homepage",d:"Fill in the empty <h1> with a title, then add a welcome paragraph and a picture.",s:"<!-- Step 1: homepage -->\n<h1></h1>\n",k:[["A heading with text",d=>qa(d,"h1").some(e=>e.textContent.trim())],["A paragraph with text",d=>qa(d,"p").some(e=>e.textContent.trim())],["A picture with alt text, like <img src=\"house.png\" alt=\"…\">",d=>qa(d,"img").some(e=>(e.getAttribute("alt")||"").trim())]]},
+{t:"Step 2 of 6: The rooms",d:"Add an <h2> heading, then list at least three rooms in a <ul>.",s:"\n<!-- Step 2: rooms -->\n",k:[["An <h2> heading",d=>qa(d,"h2").length>0],["A <ul> with three or more <li> items",d=>qa(d,"ul").some(u=>u.querySelectorAll(":scope > li").length>=3)]]},
+{t:"Step 3 of 6: Contact form",d:"Build a form with a labelled name box and a button.",s:"\n<!-- Step 3: contact form -->\n",k:[["A <form>",d=>qa(d,"form").length>0],["An <input> with an id and a <label> whose for matches it",d=>qa(d,"input[id]").some(i=>qa(d,"label[for=\""+i.id+"\"]").length)],["A <button>",d=>qa(d,"button").length>0]]},
+{t:"Step 4 of 6: Style it",d:"Give an element a class, then add a <style> block with a rule for that class, a color, and some padding or margin.",s:"\n<!-- Step 4: style -->\n<style>\n  \n</style>",k:[["A class rule (like .rooms { }) that matches an element with that class",clsHit],["A color or background-color",d=>/(^|[\s;{])(background-)?color\s*:/.test(css(d))],["Padding or margin",d=>/(^|[\s;{])(padding|margin)\s*:/.test(css(d))]]},
+{t:"Step 5 of 6: Blank page, lay it out",d:"No code is given. Write the CSS yourself: lay your rooms list out as a flex row with a gap, and give every list item a background color and some padding.",s:"\n<!-- Step 5: write the layout CSS yourself -->\n",k:[["Your rooms list (the <ul> with 3+ items) is a horizontal flex row",d=>{const u=rl(d);if(!u)return false;const c=cs(d,u);return c.display==="flex"&&c.flexDirection==="row"}],["Your rooms list has a gap between its items",d=>{const u=rl(d);return !!u&&parseFloat(cs(d,u).columnGap)>0}],["Every room <li> has a background color and padding",d=>{const u=rl(d);if(!u)return false;const l=[...u.children].filter(e=>e.tagName==="LI");return l.length>0&&l.every(e=>{const c=cs(d,e);return c.backgroundColor!=="rgba(0, 0, 0, 0)"&&c.backgroundColor!=="transparent"&&parseFloat(c.paddingTop)>0})}]]},
+{t:"Step 6 of 6: Final challenge, no hints",d:"Make the page feel finished. You only get the requirements: write whatever HTML and CSS you need.",s:"\n<!-- Step 6: final challenge -->\n",k:[["Uses <header>, <nav>, <main> and <footer>",d=>["header","nav","main","footer"].every(t=>qa(d,t).length)],["Uses at least two different classes",d=>new Set(qa(d,"[class]").flatMap(e=>[...e.classList])).size>=2],["Some element uses flex or grid layout",d=>qa(d,"body *").some(e=>/flex|grid/.test(cs(d,e).display))],["Has a @media rule for small screens",d=>/@media/.test(css(d))],["Has a :hover rule",d=>/:hover/.test(css(d))]]}
+];
+let pn=0,ps=null,pdone=false;try{ps=JSON.parse(localStorage.getItem(PK)||"null")}catch(e){}
+function chk(){const d=$("pv").contentDocument,S=STEPS[pn],last=pn===STEPS.length-1;if(!d||!d.body)return;
+  const r=S.k.map(([t,f])=>{let v=false;try{v=!!f(d)}catch(e){}return[t,v]}),all=r.every(x=>x[1]);
+  $("pt").textContent=S.t;$("pd").textContent=all&&last?(pdone?"Project complete! You built a real page with HTML and CSS. Copy your code into index.html on your computer to keep it.":"Every requirement is met. Press Complete to finish."):S.d;
+  $("chk").innerHTML=r.map(([t,ok])=>"<li class=\""+(ok?"on":"")+"\">"+(ok?"✓ ":"○ ")+t.replace(/</g,"&lt;")+"</li>").join("");
+  $("pnext").disabled=!all||(last&&pdone);$("pnext").textContent=last?(all?(pdone?"Completed ✓":"Complete ★"):"Finish the checklist"):"Next step";$("pprev").disabled=pn===0}
+function proj(){const s=SRC.value;try{localStorage.setItem(PK,JSON.stringify({pn,s,d:pdone}))}catch(e){}if($("pv").srcdoc===s)chk();else $("pv").srcdoc=s}
+$("pv").onload=chk;
+$("pnext").onclick=()=>{if(pn<STEPS.length-1){pn++;const m=STEPS[pn].s.trim().split("\n")[0];if(!SRC.value.includes(m))SRC.value+=STEPS[pn].s;proj()}else{pdone=true;proj()}};
+$("pprev").onclick=()=>{if(pn>0){pn--;proj()}};
+SRC.value=ps&&ps.s?ps.s:STEPS[0].s;pn=ps?Math.min(Math.max(ps.pn|0,0),STEPS.length-1):0;pdone=!!(ps&&ps.d);let pdt;SRC.oninput=()=>{pdone=false;clearTimeout(pdt);pdt=setTimeout(proj,250)};proj();
+function resetProj(){pn=0;pdone=false;SRC.value=STEPS[0].s;proj()}
+$("preset").onclick=()=>{const b=$("preset");if(b.dataset.s!=="1"){b.dataset.s="1";b.textContent="Click again to erase your code";setTimeout(()=>{b.dataset.s="";b.textContent="Start project over"},4000);return}b.dataset.s="";b.textContent="Start project over";resetProj()};
+load();init3D();render();
+</script>
+</body>
+</html>

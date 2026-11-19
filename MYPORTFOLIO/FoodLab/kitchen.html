@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Kitchen | FoodLab</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="../shared/shared.js"></script>
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar">
+            <a href="index.html" class="logo">FoodLab<span>.</span></a>
+
+            <button type="button" id="menu-toggle" class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div id="site-menu" class="site-menu" hidden></div>
+            
+        </nav>
+    </header>
+
+    <main class="kitchen-page">
+        <div class="settings-header">
+            <p class="eyebrow">YOUR KITCHEN, YOUR LAB</p>
+            <h1>My Kitchen 🧺</h1>
+            <p>Your shopping list and everything you have cooked.</p>
+        </div>
+
+        <section id="shopping" class="kitchen-card">
+            <div class="kitchen-heading">
+                <h2>🛒 Shopping list</h2>
+                <span id="shopping-count" class="kitchen-pill">0 items</span>
+            </div>
+            <p class="kitchen-hint">Add ingredients from any recipe page. Amounts of the same ingredient are combined.</p>
+            <ul id="shopping-list" class="shopping-list"></ul>
+            <p id="shopping-empty" class="kitchen-empty">Your list is empty. Open a recipe and choose "Add ingredients to shopping list".</p>
+            <div class="kitchen-buttons">
+                <button type="button" id="shopping-copy" class="kitchen-button">Copy list</button>
+                <button type="button" id="shopping-clear-checked" class="kitchen-button kitchen-button-light">Remove ticked</button>
+                <button type="button" id="shopping-clear-all" class="kitchen-button kitchen-button-light">Clear all</button>
+            </div>
+            <p id="kitchen-status" class="kitchen-hint" role="status" aria-live="polite"></p>
+        </section>
+
+        <section id="history" class="kitchen-card">
+            <div class="kitchen-heading">
+                <h2>◷ Cooking history</h2>
+                <span id="history-count" class="kitchen-pill">0 meals</span>
+            </div>
+            <p id="history-summary" class="kitchen-hint"></p>
+            <ul id="history-list" class="history-list"></ul>
+            <p id="history-empty" class="kitchen-empty">Nothing cooked yet. Finish every step of a recipe and press "Food Is Ready!" to log it here.</p>
+            <div class="kitchen-buttons">
+                <button type="button" id="history-clear" class="kitchen-button kitchen-button-light">Clear history</button>
+            </div>
+        </section>
+
+        <div style="margin-top: 30px;">
+            <a href="index.html" class="nav-link">← Back to Home</a>
+        </div>
+    </main>
+
+    <script src="kitchen.js"></script>
+</body>
+</html>

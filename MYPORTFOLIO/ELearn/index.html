@@ -1,0 +1,537 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CodeLearn — Interactive Learning</title>
+
+<link rel="stylesheet" href="../shared/shared.css">
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #080b12;
+  color: #f2f4f8;
+  font-family: Inter, Arial, sans-serif;
+}
+
+/* HEADER */
+
+.learn-header {
+  padding: 75px 8% 65px;
+  background:
+    radial-gradient(ellipse at 80% 0%, #243c64 0%, transparent 45%),
+    linear-gradient(135deg, #101827, #080b12 70%);
+  border-bottom: 1px solid #1d2736;
+}
+
+.eyebrow {
+  color: #91a9d7;
+  letter-spacing: 3px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.learn-header h1 {
+  font-size: clamp(44px, 7vw, 76px);
+  margin: 18px 0;
+  letter-spacing: -3px;
+  font-weight: 800;
+}
+
+.learn-header h1 span {
+  color: #8caeff;
+}
+
+.learn-header p {
+  color: #a4b0c3;
+  max-width: 600px;
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+.header-meta {
+  display: flex;
+  gap: 25px;
+  margin-top: 35px;
+  color: #77859c;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.header-meta span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* MAIN */
+
+.learn-main {
+  max-width: 1400px;
+  margin: auto;
+  padding: 60px 6%;
+}
+
+.section-label {
+  color: #91a9d6;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  font-weight: 700;
+}
+
+.section-title {
+  font-size: 32px;
+  margin: 12px 0;
+  letter-spacing: -1px;
+}
+
+.section-description {
+  color: #8d9bb0;
+  margin-bottom: 35px;
+  line-height: 1.7;
+}
+
+/* COURSE GRID */
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 25px;
+}
+
+.course-card {
+  background: #101722;
+  border: 1px solid #263244;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform .3s, border-color .3s, box-shadow .3s;
+}
+
+.course-card:hover {
+  transform: translateY(-6px);
+  border-color: #536b91;
+  box-shadow: 0 20px 55px #0006;
+}
+
+/* COURSE VISUAL */
+
+.course-visual {
+  height: 280px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.house-visual {
+  background:
+    radial-gradient(circle at 50% 55%, #385b83 0%, transparent 60%),
+    linear-gradient(145deg, #172940, #0c1421);
+}
+
+.robot-visual {
+  background:
+    radial-gradient(circle at 50% 55%, #46513d 0%, transparent 60%),
+    linear-gradient(145deg, #202b25, #101714);
+}
+
+.visual-number {
+  position: absolute;
+  top: 20px;
+  left: 22px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #a1b4d3;
+  opacity: .8;
+}
+
+.visual-icon {
+  font-size: 110px;
+  filter: drop-shadow(0 20px 25px #0008);
+  transition: transform .4s;
+  user-select: none;
+}
+
+.course-card:hover .visual-icon {
+  transform: scale(1.08);
+}
+
+.visual-bottom {
+  position: absolute;
+  bottom: 20px;
+  right: 22px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #bdc8d9;
+  opacity: .65;
+}
+
+/* COURSE INFO */
+
+.course-info {
+  padding: 30px;
+}
+
+.course-tag {
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: #91b3ff;
+}
+
+.robot-card .course-tag {
+  color: #b2d69a;
+}
+
+.course-info h3 {
+  font-size: 29px;
+  margin: 15px 0 12px;
+  letter-spacing: -.8px;
+}
+
+.course-info p {
+  color: #9ba8ba;
+  line-height: 1.8;
+  font-size: 14px;
+  min-height: 76px;
+}
+
+.course-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 23px 0 28px;
+}
+
+.course-details span {
+  padding: 8px 11px;
+  border-radius: 7px;
+  background: #1b2636;
+  color: #bdc9dc;
+  font-size: 11px;
+  border: 1px solid #263449;
+}
+
+.robot-card .course-details span {
+  background: #1b2922;
+  border-color: #2c4033;
+  color: #c1d7c0;
+}
+
+/* BUTTON */
+
+.launch-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 15px 18px;
+  border-radius: 10px;
+  background: #dce7fa;
+  color: #111b2d;
+  font-weight: 800;
+  font-size: 13px;
+  text-decoration: none;
+  transition: .25s;
+}
+
+.launch-button:hover {
+  background: white;
+  transform: translateY(-2px);
+}
+
+.robot-card .launch-button {
+  background: #d9e9d3;
+  color: #18251a;
+}
+
+.robot-card .launch-button:hover {
+  background: white;
+}
+
+/* COMING SOON */
+
+.coming-section {
+  margin-top: 75px;
+}
+
+.coming-card {
+  padding: 30px;
+  border: 1px dashed #334156;
+  border-radius: 16px;
+  background: #0d131d;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.coming-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: #192336;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 23px;
+}
+
+.coming-card h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+.coming-card p {
+  color: #8794a8;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* FOOTER */
+
+.learn-footer {
+  text-align: center;
+  padding: 35px;
+  color: #647187;
+  font-size: 11px;
+  letter-spacing: 2px;
+  border-top: 1px solid #1c2634;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 900px) {
+  .course-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .course-visual {
+    height: 260px;
+  }
+
+  .course-info p {
+    min-height: auto;
+  }
+}
+
+@media(max-width: 600px) {
+  .learn-header {
+    padding: 50px 7% 45px;
+  }
+
+  .learn-main {
+    padding: 40px 5%;
+  }
+
+  .learn-header h1 {
+    letter-spacing: -2px;
+  }
+
+  .section-title {
+    font-size: 26px;
+  }
+
+  .course-info {
+    padding: 24px;
+  }
+
+  .course-visual {
+    height: 220px;
+  }
+
+  .visual-icon {
+    font-size: 85px;
+  }
+
+  .header-meta {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="learn-header">
+
+  <p class="eyebrow">INTERACTIVE LEARNING PLATFORM</p>
+
+  <h1>CodeLearn<span>.</span></h1>
+
+  <p>
+    Not just learning code. Building with it.
+    Explore interactive experiences where you learn
+    programming by creating, experimenting and solving.
+  </p>
+
+  <div class="header-meta">
+    <span>✦ INTERACTIVE COURSES</span>
+    <span>✦ LEARN BY DOING</span>
+    <span>✦ REAL PROJECTS</span>
+  </div>
+
+</header>
+
+<main class="learn-main">
+
+  <section>
+
+    <p class="section-label">01 — LEARNING LIBRARY</p>
+
+    <h2 class="section-title">Choose your experience</h2>
+
+    <p class="section-description">
+      Two interactive worlds. Two different ways to learn.
+      Start wherever you want.
+    </p>
+
+    <div class="course-grid">
+
+      <!-- COURSE 01 -->
+
+      <article class="course-card">
+
+        <div class="course-visual house-visual">
+
+          <span class="visual-number">COURSE 001</span>
+
+          <div class="visual-icon">🏠</div>
+
+          <span class="visual-bottom">
+            HTML / CSS
+          </span>
+
+        </div>
+
+        <div class="course-info">
+
+          <span class="course-tag">
+            HTML · CSS · THREE.JS
+          </span>
+
+          <h3>Build a House</h3>
+
+          <p>
+            Start from the foundations of HTML and CSS.
+            Build your own house, experiment with styles,
+            complete coding challenges and explore your
+            creation in an interactive 3D environment.
+          </p>
+
+          <div class="course-details">
+            <span>25 Lessons</span>
+            <span>Interactive Quizzes</span>
+            <span>3D Environment</span>
+            <span>Guided Project</span>
+          </div>
+
+          <a
+            class="launch-button"
+            href="courses/build-a-house/index.html"
+          >
+            <span>Start Learning</span>
+            <span>→</span>
+          </a>
+
+        </div>
+
+      </article>
+
+      <!-- COURSE 02 -->
+
+      <article class="course-card robot-card">
+
+        <div class="course-visual robot-visual">
+
+          <span class="visual-number">COURSE 002</span>
+
+          <div class="visual-icon">🤖</div>
+
+          <span class="visual-bottom">
+            JAVASCRIPT
+          </span>
+
+        </div>
+
+        <div class="course-info">
+
+          <span class="course-tag">
+            JAVASCRIPT · LOGIC · INTERACTION
+          </span>
+
+          <h3>Code a Robot</h3>
+
+          <p>
+            Bring a robot to life using JavaScript.
+            Learn programming logic, variables, functions,
+            loops and conditions by writing code that
+            controls an interactive robot.
+          </p>
+
+          <div class="course-details">
+            <span>16 Lessons</span>
+            <span>Interactive Quizzes</span>
+            <span>3D Robot</span>
+            <span>Code Playground</span>
+          </div>
+
+          <a
+            class="launch-button"
+            href="courses/code-a-robot/index.html"
+          >
+            <span>Start Learning</span>
+            <span>→</span>
+          </a>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+  <!-- FUTURE COURSES -->
+
+  <section class="coming-section">
+
+    <p class="section-label">02 — THE LIBRARY EXPANDS</p>
+
+    <h2 class="section-title">More worlds to explore</h2>
+
+    <div class="coming-card">
+
+      <div class="coming-icon">✦</div>
+
+      <div>
+        <h3>More interactive experiences are in development</h3>
+
+        <p>
+          New programming languages, creative coding challenges
+          and immersive learning environments will be added here.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="learn-footer">
+  CODELEARN · LEARN BY BUILDING
+</footer>
+
+</body>
+</html>
+```

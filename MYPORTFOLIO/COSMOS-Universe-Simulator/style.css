@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;800&display=swap');
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040b;color:#eaf2ff;font-family:Manrope,sans-serif}#universe{position:fixed;inset:0}canvas{display:block}
+header{position:fixed;z-index:2;top:22px;left:26px;right:26px;display:flex;align-items:center;gap:14px;font-size:13px;letter-spacing:.15em}.portfolio-link{font:9px 'DM Mono',monospace;letter-spacing:.12em;color:#91a3bd;text-decoration:none;border:1px solid #ffffff20;border-radius:5px;padding:7px 9px}.portfolio-link:hover{color:#dceaff;border-color:#77d9ff66}header span,header label,small,footer{font:9px 'DM Mono',monospace;letter-spacing:.12em;color:#91a3bd}header label{margin-left:auto;color:#a8e9c8}.panel{position:fixed;z-index:2;background:rgba(8,14,27,.78);border:1px solid rgba(151,183,226,.16);border-radius:13px;backdrop-filter:blur(16px);padding:19px;box-shadow:0 12px 50px #0004}
+.intro{top:100px;left:26px;width:290px}.intro small,.controls small,.info small{color:#77d9ff}h1{font-size:29px;line-height:1.13;letter-spacing:-.05em;margin:13px 0}h1 em{color:#8bcfff;font-style:normal}.panel p{font-size:10px;line-height:1.7;color:#a6b5ca}.stats{display:flex;justify-content:space-between;border-top:1px solid #ffffff20;margin-top:18px;padding-top:14px}.stats b{display:block;font-size:17px}.stats small{font-size:8px}.controls{left:26px;bottom:40px;width:290px}.controls p{display:flex;justify-content:space-between;align-items:center;margin:9px 0}kbd{font:8px 'DM Mono';border:1px solid #ffffff30;border-radius:4px;padding:5px;color:#d7e7fa}button{width:100%;padding:10px;border:0;border-radius:7px;background:#b8e8ff;color:#07111d;font-weight:700;margin-top:10px;cursor:pointer}.secondary{background:transparent;border:1px solid #ffffff30;color:#d7e7fa;margin-top:7px}.info{right:26px;bottom:40px;width:270px}.info label{display:block;color:#77d9ff;font:8px 'DM Mono';margin:12px 0 6px}.info h2{font-size:17px;margin:0}hr{border:0;border-top:1px solid #ffffff20;margin:13px 0}.info p{display:flex;justify-content:space-between;gap:10px}.info p b{color:#dceaff;font-weight:500;text-align:right}footer{position:fixed;bottom:13px;left:50%;transform:translateX(-50%);white-space:nowrap}#loading{position:fixed;z-index:5;inset:0;display:grid;place-items:center;background:#02040b;color:#9edfff;font:10px 'DM Mono';letter-spacing:.2em;transition:opacity .6s}#loading.hidden{opacity:0;pointer-events:none}
+@media(max-width:700px){header{top:12px;left:13px;right:13px}.intro{top:65px;left:13px;width:245px;padding:14px}h1{font-size:23px}.controls{left:13px;bottom:13px;width:195px;padding:12px}.info{right:13px;bottom:13px;width:195px;padding:12px}.info>p{display:none}footer{display:none}}
+
+/* --------------------------------------------------
+   SOLAR SYSTEM EXPLORATION INTERFACE
+   A distinct cockpit-style layout for planetary mode.
+-------------------------------------------------- */
+body.solar-mode {
+  background: radial-gradient(ellipse at 50% 48%, #101b2b 0%, #050a13 48%, #02040a 100%);
+}
+body.solar-mode header {
+  top: 0; left: 0; right: 0; height: 62px; padding: 0 30px;
+  background: linear-gradient(90deg, rgba(5,12,23,.94), rgba(10,21,36,.78));
+  border-bottom: 1px solid rgba(126,190,230,.24);
+  backdrop-filter: blur(18px);
+}
+body.solar-mode header b { color: #f6c979; font-size: 16px; letter-spacing: .2em; }
+body.solar-mode header span { color: #b8cce0; }
+body.solar-mode header label { color: #f2c779; }
+body.solar-mode .panel {
+  background: linear-gradient(145deg, rgba(10,22,38,.88), rgba(5,12,23,.78));
+  border: 1px solid rgba(128,177,213,.25);
+  border-radius: 5px; box-shadow: 0 18px 55px rgba(0,0,0,.38);
+}
+body.solar-mode .intro { top: 88px; left: 30px; width: 310px; border-left: 2px solid #e9b85f; }
+body.solar-mode .intro small, body.solar-mode .controls small, body.solar-mode .info small {
+  color: #e9bd70; letter-spacing: .2em;
+}
+body.solar-mode h1 { font-size: 32px; line-height: 1.08; }
+body.solar-mode h1 em { color: #f4cb83; }
+body.solar-mode .intro p { color: #aebfd1; font-size: 11px; }
+body.solar-mode .stats { border-color: rgba(233,189,112,.25); }
+body.solar-mode .stats b { color: #f4d49c; }
+body.solar-mode .controls { left: 30px; bottom: 28px; width: 310px; }
+body.solar-mode .controls p { color: #b5c6d8; }
+body.solar-mode kbd { border-color: rgba(233,189,112,.38); color: #f1d7a8; }
+body.solar-mode button { background: #e9bd70; color: #101722; border-radius: 3px; }
+body.solar-mode button.secondary { background: rgba(255,255,255,.025); border: 1px solid rgba(233,189,112,.4); color: #f2d9ad; }
+body.solar-mode .info { right: 30px; top: 88px; bottom: auto; width: 285px; border-right: 2px solid #e9b85f; }
+body.solar-mode .info label { color: #e9bd70; }
+body.solar-mode .info h2 { font-size: 20px; color: #f4e8d3; }
+body.solar-mode .info p { color: #aebfd1; }
+body.solar-mode .info p b { color: #f4d49c; }
+body.solar-mode hr { border-color: rgba(233,189,112,.22); }
+body.solar-mode footer { color: #8ea6bd; }
+body.solar-mode #loading { background: #020711; color: #f2ca83; }
+@media (max-width: 700px) {
+  body.solar-mode header { height: 52px; padding: 0 14px; gap: 8px; }
+  body.solar-mode header span { display: none; }
+  body.solar-mode .intro { top: 66px; left: 12px; width: 220px; }
+  body.solar-mode h1 { font-size: 23px; }
+  body.solar-mode .info { top: 66px; right: 12px; width: 190px; }
+  body.solar-mode .controls { left: 12px; bottom: 12px; width: 190px; }
+}
+
+@media(max-width:500px){header span{display:none}header{gap:8px}.portfolio-link{padding:5px 7px}header b{font-size:11px}}

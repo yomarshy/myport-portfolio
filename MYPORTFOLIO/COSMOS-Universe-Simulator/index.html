@@ -1,0 +1,141 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>COSMOS — Universe Simulator</title>
+
+    <link rel="stylesheet" href="./style.css">
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+
+<body>
+
+    <div id="universe"></div>
+
+    <!-- HEADER -->
+    <header>
+        <a class="portfolio-link" href="../index.html">← MYPORT</a>
+        <b>✦ COSMOS</b>
+        <span>UNIVERSE SIMULATOR · ALPHA 01</span>
+        <label>● SIMULATION ONLINE</label>
+    </header>
+
+    <!-- INTRO PANEL -->
+    <section class="panel intro">
+
+        <small>DEEP SPACE EXPLORATION</small>
+
+        <h1>
+            Explore the<br>
+            <em>known universe.</em>
+        </h1>
+
+        <p>
+            A procedural 3D cosmic field containing
+            distant galaxies, stars and nebula-like structures.
+        </p>
+
+        <div class="stats">
+
+            <div>
+                <b id="galaxy-count">08</b>
+                <small>GALAXIES</small>
+            </div>
+
+            <div>
+                <b id="star-count">—</b>
+                <small>STAR PARTICLES</small>
+            </div>
+
+            <div>
+                <b>3D</b>
+                <small>SPACE</small>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- FLIGHT CONTROLS -->
+    <section class="panel controls">
+
+        <small>FLIGHT CONTROLS</small>
+
+        <p><kbd>LEFT DRAG</kbd> Rotate view</p>
+        <p><kbd>RIGHT DRAG</kbd> Pan camera</p>
+        <p><kbd>SCROLL</kbd> Zoom</p>
+        <p><kbd>CLICK</kbd> Select galaxy</p>
+
+        <button id="pause">
+            Ⅱ Pause simulation
+        </button>
+
+        <button id="reset" class="secondary">
+            Reset camera
+        </button>
+
+        <button id="universe-view" class="secondary">
+            🌌 Return to Universe
+        </button>
+
+        <button id="enter-system" hidden>
+    ✨ Explore Star System
+        </button>
+
+    </section>
+
+    <!-- OBJECT INFORMATION -->
+    <section class="panel info">
+
+        <small>OBJECT IDENTIFICATION</small>
+
+        <label>COSMIC FIELD</label>
+
+        <h2 id="name">Observable Universe</h2>
+
+        <p id="description">
+            Select a galaxy to inspect its simulated properties.
+            This is a navigable artistic model, not a map to astronomical scale.
+        </p>
+
+        <hr>
+
+        <p>
+            Object class
+            <b id="class">Universe model</b>
+        </p>
+
+        <p>
+            Simulation status
+            <b id="status">Active</b>
+        </p>
+
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        PROCEDURAL VISUALIZATION · DISTANCES AND COUNTS ARE SIMULATED
+    </footer>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading">
+        INITIALIZING COSMOS ENGINE…
+    </div>
+
+    <!-- MAIN JAVASCRIPT -->
+    <script type="module" src="./main.js"></script>
+
+</body>
+</html>

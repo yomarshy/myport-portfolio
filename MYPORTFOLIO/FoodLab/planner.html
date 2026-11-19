@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal planner | FoodLab</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="../shared/shared.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar">
+            <a href="index.html" class="logo">FoodLab<span>.</span></a>
+            <button type="button" id="menu-toggle" class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu"><span></span><span></span><span></span></button>
+            <div id="site-menu" class="site-menu" hidden></div>
+        </nav>
+    </header>
+
+    <main class="kitchen-page planner-page" id="main-content">
+        <div class="settings-header">
+            <p class="eyebrow">YOUR KITCHEN, YOUR LAB</p>
+            <h1>Weekly meal planner 📅</h1>
+            <p>Pick a recipe for each meal. One click adds everything you need to your shopping list. Saved in this browser.</p>
+        </div>
+        <section class="kitchen-card">
+            <div class="planner-wrap"><table class="planner" id="planner"></table></div>
+            <div class="kitchen-buttons">
+                <button type="button" id="plan-shop" class="kitchen-button">🛒 Add this week to shopping list</button>
+                <button type="button" id="plan-copy" class="kitchen-button kitchen-button-light">Copy plan</button>
+                <button type="button" id="plan-clear" class="kitchen-button kitchen-button-light">Clear week</button>
+            </div>
+            <p id="plan-status" class="kitchen-hint" role="status" aria-live="polite"></p>
+        </section>
+        <section class="kitchen-card">
+            <div class="kitchen-heading"><h2>This week you will need</h2><span id="need-count" class="kitchen-pill">0 items</span></div>
+            <ul id="need-list" class="shopping-list"></ul>
+            <p id="need-empty" class="kitchen-empty">Plan a meal to see the ingredients.</p>
+        </section>
+    </main>
+    <script src="recipes.js"></script>
+    <script src="custom.js"></script>
+    <script src="planner.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+/* SHARED LOOK for FoodLab and CodeLearn.
+   One set of colour tokens (light + dark), one font, the top app bar, toasts and loading states.
+   Loaded BEFORE each app's own style.css. */
+
+:root {
+  --green: #176B45;
+  --green-dark: #104D32;
+  --green-light: #E7F1E8;
+  --text: #20352B;
+  --muted: #6B776E;
+  --border: #E4E8DF;
+  --surface: #FFFFFF;
+  --background: #F6F5EF;
+  --warn-bg: #FDEBC6;
+  --warn-text: #7A4B00;
+  --ok-bg: #E6F3E8;
+  --ok-text: #24563D;
+  --radius: 18px;
+  --shadow: 0 8px 24px rgba(24, 53, 38, 0.08);
+  --font: Inter, "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --appbar-h: 46px;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --green: #2F8F62;
+  --green-dark: #226E4B;
+  --green-light: #1E3328;
+  --text: #ECEFEA;
+  --muted: #A5B0A8;
+  --border: #33403A;
+  --surface: #1F2622;
+  --background: #121714;
+  --warn-bg: #3A2F12;
+  --warn-text: #F3D58B;
+  --ok-bg: #1E3328;
+  --ok-text: #A9DDBF;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--background); color: var(--text); }
+
+/* Visible keyboard focus everywhere */
+:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+
+/* Skip link for keyboard and screen-reader users */
+.skip-link { position: absolute; left: 8px; top: -60px; z-index: 1000; padding: 8px 14px; border-radius: 10px; background: var(--green); color: #fff; text-decoration: none; font-weight: 700; }
+.skip-link:focus { top: 8px; }
+
+/* ---------- Top app bar ---------- */
+.app-bar { position: sticky; top: 0; z-index: 900; display: flex; align-items: center; gap: 6px; min-height: var(--appbar-h); padding: 0 max(12px, 3%); background: var(--green-dark); color: #fff; font-family: var(--font); box-shadow: 0 2px 10px rgba(0, 0, 0, .12); }
+:root[data-theme="dark"] .app-bar { background: #0c110e; border-bottom: 1px solid var(--border); }
+.app-bar-brand { margin-right: 10px; font-weight: 800; font-size: 13px; letter-spacing: .5px; color: #fff; text-decoration: none; white-space: nowrap; }
+.app-bar-links { display: flex; gap: 4px; flex: 1; overflow-x: auto; scrollbar-width: none; }
+.app-bar-links::-webkit-scrollbar { display: none; }
+.app-bar a.app-link { padding: 7px 12px; border-radius: 999px; color: #e8f3ec; font-size: 14px; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background .15s ease; }
+.app-bar a.app-link:hover { background: rgba(255, 255, 255, .14); }
+.app-bar a.app-link[aria-current="page"] { background: #fff; color: var(--green-dark); }
+:root[data-theme="dark"] .app-bar a.app-link[aria-current="page"] { background: var(--green); color: #fff; }
+.app-bar button.app-theme { width: 36px; height: 36px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .14); color: #fff; font-size: 16px; cursor: pointer; transition: background .15s ease; }
+.app-bar button.app-theme:hover { background: rgba(255, 255, 255, .26); }
+.app-bar :focus-visible { outline-color: #fff; }
+@media (max-width: 520px) { .app-bar-brand { display: none; } .app-bar a.app-link { padding: 7px 10px; font-size: 13px; } }
+
+/* ---------- Toasts ---------- */
+#toasts { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 1100; display: grid; gap: 8px; justify-items: center; width: max-content; max-width: calc(100vw - 32px); }
+.toast { padding: 12px 18px; border-radius: 12px; background: #263b35; color: #fff; font-size: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .25); animation: toast-in .25s ease; }
+:root[data-theme="dark"] .toast { background: #ECEFEA; color: #121714; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(12px); } }
+
+/* ---------- Loading + empty states ---------- */
+.skeleton { position: relative; overflow: hidden; border-radius: 10px; background: var(--border); min-height: 1em; }
+.skeleton::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .45), transparent); transform: translateX(-100%); animation: shimmer 1.2s infinite; }
+:root[data-theme="dark"] .skeleton::after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .08), transparent); }
+@keyframes shimmer { to { transform: translateX(100%); } }
+.spinner { display: inline-block; width: 14px; height: 14px; margin-right: 6px; vertical-align: -2px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Shared queue cards (FoodLab orders in AgentCity, CodeLearn tasks in AgentCity) */
+.queue-box { display: grid; gap: 8px; }
+.queue-card { display: grid; gap: 4px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); animation: card-in .2s ease; }
+.queue-card.is-done { opacity: .62; }
+.queue-card strong { font-size: 14px; }
+.queue-card p { margin: 0; color: var(--muted); font-size: 12px; }
+.queue-card .queue-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.queue-status { justify-self: start; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; background: var(--green-light); color: var(--ok-text); }
+.queue-status.is-active { background: var(--warn-bg); color: var(--warn-text); }
+.queue-status.is-waiting { background: var(--border); color: var(--muted); }
+.queue-empty { margin: 0; color: var(--muted); font-size: 13px; }
+@keyframes card-in { from { opacity: 0; transform: translateY(4px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+/* Small buttons used inside queue cards */
+.queue-btn { padding: 6px 11px; border: 0; border-radius: 10px; background: var(--green); color: #fff; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: background .15s ease, transform .1s ease; }
+.queue-btn:hover { background: var(--green-dark); }
+.queue-btn:active { transform: translateY(1px); }
+.queue-btn.secondary { background: var(--green-light); color: var(--green-dark); }
+:root[data-theme="dark"] .queue-btn.secondary { color: var(--text); }
+.queue-btn:disabled { opacity: .55; cursor: not-allowed; }

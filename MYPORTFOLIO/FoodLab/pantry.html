@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What can I cook? | FoodLab</title>
+    <link rel="stylesheet" href="../shared/shared.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="../shared/shared.js"></script>
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar">
+            <a href="index.html" class="logo">FoodLab<span>.</span></a>
+
+            <button type="button" id="menu-toggle" class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div id="site-menu" class="site-menu" hidden></div>
+        </nav>
+    </header>
+
+    <main class="kitchen-page" id="main-content">
+        <div class="settings-header">
+            <p class="eyebrow">YOUR KITCHEN, YOUR LAB</p>
+            <h1>What can I cook? 🥘</h1>
+            <p>Tell FoodLab what is in your kitchen and it ranks the recipes you can make, with what is missing.</p>
+        </div>
+
+        <section class="kitchen-card" aria-labelledby="have-title">
+            <div class="kitchen-heading">
+                <h2 id="have-title">What I have</h2>
+                <span id="pantry-count" class="kitchen-pill">0 items</span>
+            </div>
+
+            <form id="pantry-form" class="pantry-form">
+                <label for="pantry-input" class="visually-hidden">Ingredients you have, separated by commas</label>
+                <input id="pantry-input" type="text" autocomplete="off" placeholder="e.g. eggs, onion, tomato, paneer">
+                <button type="submit">Add</button>
+            </form>
+
+            <ul id="pantry-chips" class="pantry-chips" aria-label="Ingredients you have"></ul>
+
+            <label class="pantry-staples">
+                <input type="checkbox" id="pantry-staples" checked>
+                <span>Assume I always have salt, cooking oil and water</span>
+            </label>
+
+            <div class="kitchen-buttons">
+                <button type="button" id="pantry-clear" class="kitchen-button kitchen-button-light">Clear what I have</button>
+            </div>
+        </section>
+
+        <section aria-labelledby="results-title" class="pantry-results-section">
+            <h2 id="results-title">Recipes for you</h2>
+            <div id="pantry-results" class="pantry-results" aria-live="polite"></div>
+        </section>
+    </main>
+
+    <script src="recipes.js"></script>
+    <script src="custom.js"></script>
+    <script src="pantry.js"></script>
+</body>
+</html>

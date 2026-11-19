@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A personal digital portfolio of interactive experiments, learning tools, and creative projects.">
+  <title>MyPort — Digital Universe</title>
+  <style>
+    :root { color-scheme: dark; --bg:#080b10; --surface:#111720; --line:#26313d; --text:#f2f5f8; --muted:#9aa7b5; --accent:#9dd8ff; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; min-height:100vh; font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--text); background:radial-gradient(ellipse at 72% 0%, #152338 0%, transparent 42%), radial-gradient(ellipse at 5% 80%, #131c28 0%, transparent 40%), var(--bg); }
+    a { color:inherit; }
+    .shell { width:min(1180px, calc(100% - 44px)); margin:auto; }
+    header { padding:30px 0 0; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+    .brand { display:flex; align-items:center; gap:11px; font-size:13px; letter-spacing:.16em; font-weight:800; text-transform:uppercase; color:#dfe8f2; }
+    .brand-mark { width:34px; height:34px; border:1px solid #34475b; border-radius:11px; display:grid; place-items:center; background:linear-gradient(135deg,#1b2b3d,#10151d); color:var(--accent); }
+    .status { display:flex; align-items:center; gap:8px; color:#9eacba; font-size:12px; letter-spacing:.08em; text-transform:uppercase; }
+    .status-dot { width:7px; height:7px; border-radius:50%; background:#78d6b1; box-shadow:0 0 12px #78d6b188; }
+    .hero { padding:clamp(70px,12vh,130px) 0 48px; max-width:840px; }
+    .eyebrow { color:#91b5d0; font-size:12px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; }
+    h1 { margin:18px 0 18px; font-size:clamp(46px,8vw,92px); line-height:.98; letter-spacing:-.065em; font-weight:650; }
+    h1 span { color:#a9c9e4; }
+    .intro { max-width:600px; font-size:clamp(16px,2vw,19px); line-height:1.7; color:#a8b5c2; }
+    .section-heading { display:flex; align-items:end; justify-content:space-between; gap:20px; padding:25px 0 18px; border-bottom:1px solid #26313d; }
+    .section-heading h2 { margin:0; font-size:15px; font-weight:650; letter-spacing:.02em; }
+    .section-heading p { margin:0; color:#7e8d9d; font-size:12px; }
+    .projects { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; padding:22px 0 70px; }
+    .project { position:relative; min-height:300px; padding:22px; overflow:hidden; border:1px solid #26313d; border-radius:19px; background:linear-gradient(155deg,#151e29 0%,#0e131a 72%); text-decoration:none; transition:transform .25s ease,border-color .25s ease,background .25s ease; display:flex; flex-direction:column; }
+    .project:hover { transform:translateY(-5px); border-color:#54708a; background:linear-gradient(155deg,#1a2838,#111720); }
+    .project:focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
+    .project::after { content:""; position:absolute; width:210px; height:210px; border-radius:50%; right:-95px; top:-100px; background:radial-gradient(circle, var(--glow),transparent 70%); pointer-events:none; opacity:.6; }
+    .project.food { --glow:#e4a76b55; }
+    .project.cosmos { --glow:#79baff55; }
+    .project.learn { --glow:#8cdbbd55; }
+    .project-top { display:flex; justify-content:space-between; align-items:center; }
+    .project-icon { width:46px; height:46px; display:grid; place-items:center; border:1px solid #344252; border-radius:14px; background:#0b1118; font-size:21px; }
+    .project-number { color:#718193; font-size:11px; letter-spacing:.14em; }
+    .project h3 { margin:30px 0 9px; font-size:25px; letter-spacing:-.03em; }
+    .project p { margin:0; color:#a1afbd; font-size:14px; line-height:1.65; max-width:290px; }
+    .project-bottom { display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:25px; color:#c5d5e4; font-size:12px; letter-spacing:.04em; }
+    .arrow { width:32px; height:32px; display:grid; place-items:center; border:1px solid #344252; border-radius:50%; transition:transform .2s ease; }
+    .project:hover .arrow { transform:translateX(3px); }
+    footer { border-top:1px solid #202b36; padding:22px 0 28px; color:#657484; display:flex; justify-content:space-between; gap:20px; font-size:12px; }
+    @media(max-width:800px) { .projects { grid-template-columns:1fr; } .project { min-height:230px; } .hero { padding-top:70px; } }
+    @media(max-width:520px) { .shell { width:calc(100% - 30px); } header { padding-top:20px; } .status { font-size:10px; } .section-heading { align-items:start; flex-direction:column; } footer { flex-direction:column; } }
+    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; scroll-behavior:auto!important; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand"><span class="brand-mark">✦</span> MYPORT / PROJECTS</div>
+      <div class="status"><span class="status-dot"></span> Three experiences online</div>
+    </header>
+    <main>
+      <section class="hero">
+        <p class="eyebrow">A collection of interactive experiments</p>
+        <h1>Ideas made<br><span>interactive.</span></h1>
+        <p class="intro">A small digital universe of things I build — from food discovery and learning tools to a procedural exploration of space.</p>
+      </section>
+      <section aria-labelledby="projects-title">
+        <div class="section-heading">
+          <h2 id="projects-title">Explore the projects</h2>
+          <p>Choose an experience to begin</p>
+        </div>
+        <div class="projects">
+          <a class="project food" href="FoodLab/index.html">
+            <div class="project-top"><span class="project-icon">🍳</span><span class="project-number">01 / FOOD</span></div>
+            <h3>FoodLab</h3>
+            <p>Discover recipes, explore ingredients, plan meals, and turn your kitchen into a place to experiment.</p>
+            <div class="project-bottom"><span>Explore the kitchen</span><span class="arrow">↗</span></div>
+          </a>
+          <a class="project cosmos" href="COSMOS-Universe-Simulator/index.html">
+            <div class="project-top"><span class="project-icon">✦</span><span class="project-number">02 / SPACE</span></div>
+            <h3>COSMOS</h3>
+            <p>Navigate a procedural universe, discover galaxies, and explore the Solar System in 3D.</p>
+            <div class="project-bottom"><span>Enter the universe</span><span class="arrow">↗</span></div>
+          </a>
+          <a class="project learn" href="ELearn/index.html">
+            <div class="project-top"><span class="project-icon">⌘</span><span class="project-number">03 / LEARNING</span></div>
+            <h3>CodeLearn</h3>
+            <p>Learn web development through lessons, practice, and a live code editor.</p>
+            <div class="project-bottom"><span>Start learning</span><span class="arrow">↗</span></div>
+          </a>
+        </div>
+      </section>
+    </main>
+    <footer><span>MYPORT · PERSONAL PROJECT SPACE</span><span>Built to explore, learn, and create.</span></footer>
+  </div>
+</body>
+</html>
