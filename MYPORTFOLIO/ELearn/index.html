@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -142,6 +143,33 @@ body {
     linear-gradient(145deg, #202b25, #101714);
 }
 
+/* COURSE 03 — ELECTRIC SCOOTER */
+
+.scooter-visual {
+  background:
+    radial-gradient(circle at 50% 55%, #795330 0%, transparent 60%),
+    linear-gradient(145deg, #30251b, #15120f);
+}
+
+.scooter-card .course-tag {
+  color: #f0bd85;
+}
+
+.scooter-card .course-details span {
+  background: #292117;
+  border-color: #443425;
+  color: #e6c9a7;
+}
+
+.scooter-card .launch-button {
+  background: #f0d3ad;
+  color: #24180d;
+}
+
+.scooter-card .launch-button:hover {
+  background: #ffffff;
+}
+
 .visual-number {
   position: absolute;
   top: 20px;
@@ -202,6 +230,8 @@ body {
   font-size: 14px;
   min-height: 76px;
 }
+
+/* COURSE DETAILS */
 
 .course-details {
   display: flex;
@@ -281,6 +311,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 23px;
+  flex-shrink: 0;
 }
 
 .coming-card h3 {
@@ -355,11 +386,18 @@ body {
     flex-wrap: wrap;
     gap: 15px;
   }
+
+  .coming-card {
+    padding: 22px;
+    align-items: flex-start;
+  }
 }
 </style>
 </head>
 
 <body>
+
+<!-- HEADER -->
 
 <header class="learn-header">
 
@@ -381,6 +419,8 @@ body {
 
 </header>
 
+<!-- MAIN -->
+
 <main class="learn-main">
 
   <section>
@@ -390,13 +430,14 @@ body {
     <h2 class="section-title">Choose your experience</h2>
 
     <p class="section-description">
-      Two interactive worlds. Two different ways to learn.
+      Three interactive experiences. Explore programming,
+      engineering and creativity through immersive learning.
       Start wherever you want.
     </p>
 
     <div class="course-grid">
 
-      <!-- COURSE 01 -->
+      <!-- COURSE 01 — BUILD A HOUSE -->
 
       <article class="course-card">
 
@@ -446,7 +487,7 @@ body {
 
       </article>
 
-      <!-- COURSE 02 -->
+      <!-- COURSE 02 — CODE A ROBOT -->
 
       <article class="course-card robot-card">
 
@@ -496,6 +537,56 @@ body {
 
       </article>
 
+      <!-- COURSE 03 — PIGGO ELECTRIC -->
+
+      <article class="course-card scooter-card">
+
+        <div class="course-visual scooter-visual">
+
+          <span class="visual-number">COURSE 003</span>
+
+          <div class="visual-icon">🛵</div>
+
+          <span class="visual-bottom">
+            ELECTRIC MOBILITY
+          </span>
+
+        </div>
+
+        <div class="course-info">
+
+          <span class="course-tag">
+            ELECTRIC VEHICLE · ENGINEERING · 3D
+          </span>
+
+          <h3>Piggo Electric Scooter</h3>
+
+          <p>
+            Explore the engineering behind an electric scooter.
+            Discover its components, understand how its systems
+            work together and experience interactive technical
+            learning through a 3D electric vehicle.
+          </p>
+
+          <div class="course-details">
+            <span>3D Experience</span>
+            <span>Component Exploration</span>
+            <span>Interactive Learning</span>
+            <span>Engineering</span>
+          </div>
+
+          <a
+            class="launch-button"
+            href="courses/piggo-electric/index.html"
+          >
+            <span>Explore Scooter</span>
+            <span>→</span>
+          </a>
+
+        </div>
+
+      </article>
+
     </div>
 
   </section>
@@ -513,12 +604,14 @@ body {
       <div class="coming-icon">✦</div>
 
       <div>
+
         <h3>More interactive experiences are in development</h3>
 
         <p>
           New programming languages, creative coding challenges
           and immersive learning environments will be added here.
         </p>
+
       </div>
 
     </div>
@@ -527,9 +620,12 @@ body {
 
 </main>
 
+<!-- FOOTER -->
+
 <footer class="learn-footer">
   CODELEARN · LEARN BY BUILDING
 </footer>
 
 </body>
 </html>
+```
